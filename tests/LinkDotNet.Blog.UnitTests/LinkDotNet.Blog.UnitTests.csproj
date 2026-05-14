@@ -4,6 +4,13 @@
 		<OutputType>Exe</OutputType>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="LinkDotNet.Enumeration">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\LinkDotNet.Blog.TestUtilities\LinkDotNet.Blog.TestUtilities.csproj" />

@@ -1,7 +1,5 @@
 using System;
 using System.Threading.RateLimiting;
-using Blazorise;
-using Blazorise.Bootstrap5;
 using LinkDotNet.Blog.Web.Features.Admin.BlogPostEditor.Services;
 using LinkDotNet.Blog.Web.Features.Admin.Sitemap.Services;
 using LinkDotNet.Blog.Web.Features.Bookmarks;
@@ -28,6 +26,7 @@ public static class ServiceExtensions
         services.AddScoped<IFileProcessor, FileProcessor>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<ITagQueryService, TagQueryService>();
+        services.AddScoped<IBlogPostVersionService, BlogPostVersionService>();
 
         services.AddSingleton<CacheService>();
         services.AddSingleton<ICacheInvalidator>(s => s.GetRequiredService<CacheService>());
@@ -49,15 +48,6 @@ public static class ServiceExtensions
                     _ => new FixedWindowRateLimiterOptions { PermitLimit = 15, Window = TimeSpan.FromMinutes(1) })
             );
         });
-
-        return services;
-    }
-
-    public static IServiceCollection AddBlazoriseWithBootstrap(this IServiceCollection services)
-    {
-        services
-            .AddBlazorise()
-            .AddBootstrap5Providers();
 
         return services;
     }
