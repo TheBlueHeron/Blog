@@ -8,7 +8,7 @@ public class TalkBuilder
     private string title = "Some presentation";
     private string place = "NDC Oslo";
     private string description = "Details";
-    private DateTime publishDate = new DateTime(2022, 10, 2);
+    private DateTime publishDate = new(2022, 10, 2);
 
     public TalkBuilder WithTitle(string title)
     {
@@ -34,8 +34,5 @@ public class TalkBuilder
         return this;
     }
 
-    public Talk Build()
-    {
-        return Talk.Create(title, place, description, publishDate);
-    }
+    public Talk Build() => Talk.Create(title, place, description, publishDate);
 }

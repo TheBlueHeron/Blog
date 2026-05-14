@@ -79,7 +79,7 @@ public class BlogPostTests
     [Fact]
     public void ShouldTrimWhitespacesFromTags()
     {
-        var blogPost = BlogPost.Create("Title", "Sub", "Content", "Preview", false, tags: new[] { " Tag 1", " Tag 2 ", });
+        var blogPost = BlogPost.Create("Title", "Sub", "Content", "Preview", false, tags: [" Tag 1", " Tag 2 ",]);
 
         blogPost.Tags.ShouldContain("Tag 1");
         blogPost.Tags.ShouldContain("Tag 2");

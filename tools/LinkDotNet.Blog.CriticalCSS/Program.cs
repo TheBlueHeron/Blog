@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 using CommandLine;
 using LinkDotNet.Blog.CriticalCSS;
 using LinkDotNet.Blog.Domain;
@@ -107,12 +107,11 @@ static void OutputToLayout(string css, string? layoutPath)
     ArgumentException.ThrowIfNullOrEmpty(layoutPath);
 
     var layoutContent = File.ReadAllText(layoutPath);
-    const string styleTagPattern = "<style[^>]*>.*?</style>";
     const string headEndTag = "</head>";
 
 
-    layoutContent = Regex.IsMatch(layoutContent, styleTagPattern, RegexOptions.Singleline)
-        ? Regex.Replace(layoutContent, styleTagPattern, css, RegexOptions.Singleline)
+    layoutContent = StyleTagRegex().IsMatch(layoutContent)
+        ? StyleTagRegex().Replace(layoutContent, css)
         : layoutContent.Replace(headEndTag, $"{css}\n    {headEndTag}", StringComparison.OrdinalIgnoreCase);
 
     File.WriteAllText(layoutPath, layoutContent);
@@ -132,4 +131,10 @@ static void ShowHelp()
     Console.WriteLine("  criticalcss --output file --path styles.css");
     Console.WriteLine("  criticalcss --output layout --path _Layout.cshtml");
     Console.WriteLine("  criticalcss --install-playwright --output console");
+}
+
+partial class Program
+{
+    [GeneratedRegex("<style[^>]*>.*?</style>", RegexOptions.Singleline)]
+    private static partial Regex StyleTagRegex();
 }

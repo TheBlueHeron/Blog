@@ -1,4 +1,4 @@
-﻿using LinkDotNet.Blog.TestUtilities;
+using LinkDotNet.Blog.TestUtilities;
 using LinkDotNet.Blog.Web.Features.Services;
 
 namespace LinkDotNet.Blog.UnitTests.Web.Features.Services;
@@ -7,10 +7,7 @@ public class SortOrderCalculatorTests
 {
     private readonly SortOrderCalculator sut;
 
-    public SortOrderCalculatorTests()
-    {
-        sut = new SortOrderCalculator();
-    }
+    public SortOrderCalculatorTests() => sut = new SortOrderCalculator();
 
     [Fact]
     public void ShouldProperlyCalculateNewSortOrder()

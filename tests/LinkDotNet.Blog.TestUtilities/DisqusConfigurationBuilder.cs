@@ -12,11 +12,8 @@ public class DisqusConfigurationBuilder
         return this;
     }
 
-    public DisqusConfiguration Build()
+    public DisqusConfiguration Build() => new()
     {
-        return new DisqusConfiguration
-        {
-            Shortname = shortName,
-        };
-    }
+        Shortname = shortName,
+    };
 }

@@ -1,6 +1,6 @@
 :root, html[data-bs-theme='light'] {
     /* Fonts */
-    --default-font: 'Calibri';
+    --default-font: 'Segoe UI';
     --code-font: 'Lucida Console', 'Courier New';
 
 	/* Color definitions */
@@ -235,11 +235,13 @@ code {
 }
 
 .profile-text {
-	margin: auto;
-	grid-area: profile-text;
-	font-size: clamp(1.0rem, 0.6479rem + 1vw, 1.4rem);
-	line-height: clamp(1.5em, 0.6479rem + 1.1268vw, 2.25em);
-	text-align: center;
+		margin: auto;
+		grid-area: profile-text;
+		font-size: clamp(1.0rem, 0.6479rem + 1vw, 1.4rem);
+		line-height: clamp(1.5em, 0.6479rem + 1.1268vw, 2.25em);
+		text-align: center;
+		color: #eee;
+		text-shadow: 1px 2px 4px #000;
 }
 /*#endregion */
 
@@ -250,7 +252,7 @@ code {
 	font-size: 2.5rem;
 }
 
-::deep .navbar-nav li {
+.navbar-nav li {
 	padding-left: 1rem;
 	white-space: nowrap;
 }
@@ -298,11 +300,9 @@ code {
 .profile-keypoints li {
 	padding-bottom: 0.6em;
 	letter-spacing: 0.05em;
-	display: flex;
 }
 
-/* As the MarkupComponent is a base class we have to use deep */
-::deep .profile-keypoints li p {
+.profile-keypoints li p {
 	display: inline;
 }
 
@@ -468,42 +468,6 @@ code {
 	color: #D7D7D7 !important;
 }
 
-@media (min-width: 640px) {
-	.blog-card {
-		flex-direction: row;
-		max-width: 1200px;
-	}
-	.blog-card .meta {
-		flex-basis: 30%;
-		height: auto;
-	}
-	.blog-card .description {
-		flex-basis: 70%;
-	}
-	.blog-card .description:before {
-		transform: skewX(-3deg);
-		content: "";
-		background: var(--background);
-		width: 30px;
-		position: absolute;
-		left: -10px;
-		top: 0;
-		bottom: 0;
-		z-index: -1;
-	}
-	.blog-card.alt {
-		flex-direction: row-reverse;
-	}
-	.blog-card.alt .description:before {
-		left: inherit;
-		right: -10px;
-		transform: skew(3deg);
-	}
-	.blog-card.alt .details {
-		padding-left: 25px;
-	}
-}
-
 .schedule {
 	background-color: #28a745;
 }
@@ -644,18 +608,6 @@ code {
 	height: 100%;
 	object-fit: cover;
 }
-
-@media only screen and (max-width: 700px) {
-	.blog-outer-box .blog-container {
-		width: 90%;
-	}
-}
-
-@media only screen and (min-width: 700px) and (max-width: 1024px) {
-	.blog-outer-box .blog-container {
-		width: 80%;
-	}
-}
 /*#endregion */
 
 /*region ShortCodeDialog.razor */
@@ -664,3 +616,93 @@ code {
 	max-height: 100%;
 }
 /*#endregion */
+
+/* ============================================================
+	 Responsive breakpoints — ordered smallest to largest
+	 ============================================================ */
+
+/* ShortBlogPost.razor — switch to horizontal card layout (≥ 640px) */
+@media (min-width: 640px) {
+	.blog-card {
+		flex-direction: row;
+		max-width: 1200px;
+	}
+	.blog-card .meta {
+		flex-basis: 30%;
+		height: auto;
+	}
+	.blog-card .description {
+		flex-basis: 70%;
+	}
+	.blog-card .description:before {
+		transform: skewX(-3deg);
+		content: "";
+		background: var(--background);
+		width: 30px;
+		position: absolute;
+		left: -10px;
+		top: 0;
+		bottom: 0;
+		z-index: -1;
+	}
+	.blog-card.alt {
+		flex-direction: row-reverse;
+	}
+	.blog-card.alt .description:before {
+		left: inherit;
+		right: -10px;
+		transform: skew(3deg);
+	}
+	.blog-card.alt .details {
+		padding-left: 25px;
+	}
+}
+
+/* ShowBlogPostPage.razor — narrow blog container (≤ 1200px) */
+@media only screen and (max-width: 1200px) {
+	.blog-outer-box .blog-container {
+		width: 90%;
+	}
+}
+
+/* ShowBlogPostPage.razor — medium blog container (1200px – 1680px) */
+@media only screen and (min-width: 1200px) and (max-width: 1680px) {
+	.blog-outer-box .blog-container {
+		width: 80%;
+	}
+}
+
+/* NavMenu.razor — show hamburger below 1368px (overrides Bootstrap xxl at 1400px) */
+@media (max-width: 1367.98px) {
+	.navbar-expand-xxl .navbar-toggler {
+		display: block;
+	}
+	.navbar-expand-xxl .navbar-collapse {
+		display: none !important;
+	}
+	.navbar-expand-xxl .navbar-collapse.show {
+		display: block !important;
+	}
+}
+
+/* NavMenu.razor — inline nav bar at 1368px and above */
+@media (min-width: 1368px) {
+	.navbar-expand-xxl .navbar-toggler {
+		display: none;
+	}
+	.navbar-expand-xxl .navbar-collapse {
+		display: flex !important;
+		flex-basis: auto;
+	}
+	.navbar-expand-xxl .navbar-nav {
+		flex-direction: row;
+		flex-wrap: nowrap;
+	}
+	.navbar-expand-xxl .navbar-nav .nav-link {
+		padding-right: 0.5rem;
+		padding-left: 0.5rem;
+	}
+	.navbar-expand-xxl .navbar-nav li {
+		padding-left: 0.5rem;
+	}
+}

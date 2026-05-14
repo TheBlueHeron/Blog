@@ -4,7 +4,6 @@ using System.Collections.Immutable;
 using System.Linq;
 
 namespace LinkDotNet.Blog.Domain;
-
 public sealed class BlogPostVersion : Entity
 {
     public string BlogPostId { get; private set; } = default!;
@@ -50,7 +49,7 @@ public sealed class BlogPostVersion : Entity
             PreviewImageUrl = post.PreviewImageUrl,
             PreviewImageUrlFallback = post.PreviewImageUrlFallback,
             UpdatedDate = post.UpdatedDate,
-            Tags = post.Tags.ToImmutableArray(),
+            Tags = [.. post.Tags],
             IsPublished = post.IsPublished,
             ReadingTimeInMinutes = post.ReadingTimeInMinutes,
             AuthorName = post.AuthorName,

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
@@ -13,10 +13,7 @@ public sealed class SitemapService : ISitemapService
 {
     private readonly IRepository<BlogPost> repository;
 
-    public SitemapService(IRepository<BlogPost> repository)
-    {
-        this.repository = repository;
-    }
+    public SitemapService(IRepository<BlogPost> repository) => this.repository = repository;
 
     public async Task<SitemapUrlSet> CreateSitemapAsync(string baseUri)
     {
@@ -39,23 +36,17 @@ public sealed class SitemapService : ISitemapService
         return urlSet;
     }
 
-    private static ImmutableArray<SitemapUrl> CreateUrlsForBlogPosts(IEnumerable<BlogPost> blogPosts, string baseUri)
+    private static ImmutableArray<SitemapUrl> CreateUrlsForBlogPosts(IEnumerable<BlogPost> blogPosts, string baseUri) => [.. blogPosts.Select(b => new SitemapUrl
     {
-        return blogPosts.Select(b => new SitemapUrl
-        {
-            Location = $"{baseUri}blogPost/{b.Id}",
-            LastModified = b.UpdatedDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
-        }).ToImmutableArray();
-    }
+        Location = $"{baseUri}blogPost/{b.Id}",
+        LastModified = b.UpdatedDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+    })];
 
-    private static IEnumerable<SitemapUrl> CreateUrlsForTags(IEnumerable<BlogPost> blogPosts, string baseUri)
-    {
-        return blogPosts
+    private static IEnumerable<SitemapUrl> CreateUrlsForTags(IEnumerable<BlogPost> blogPosts, string baseUri) => blogPosts
             .SelectMany(b => b.Tags)
             .Distinct()
             .Select(t => new SitemapUrl
             {
                 Location = $"{baseUri}searchByTag/{Uri.EscapeDataString(t)}",
             });
-    }
 }

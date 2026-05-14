@@ -15,7 +15,7 @@ public static partial class TextProcessor
     ];
 
     public static IReadOnlyCollection<string> TokenizeAndNormalize(IEnumerable<string> texts)
-        => texts.SelectMany(TokenizeAndNormalize).ToArray();
+        => [.. texts.SelectMany(TokenizeAndNormalize)];
 
     private static IReadOnlyCollection<string> TokenizeAndNormalize(string text)
     {
@@ -23,9 +23,7 @@ public static partial class TextProcessor
 
         text = text.ToUpperInvariant();
         text = TokenRegex().Replace(text, " ");
-        return text.Split(Separator, StringSplitOptions.RemoveEmptyEntries)
-            .Where(s => !StopWords.Contains(s))
-            .ToArray();
+        return [.. text.Split(Separator, StringSplitOptions.RemoveEmptyEntries).Where(s => !StopWords.Contains(s))];
     }
 
     [GeneratedRegex(@"[^a-zA-Z\d\s]+")]

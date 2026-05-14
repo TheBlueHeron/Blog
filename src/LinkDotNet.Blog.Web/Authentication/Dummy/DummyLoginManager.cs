@@ -11,10 +11,7 @@ public sealed class DummyLoginManager : ILoginManager
 {
     private readonly HttpContext context;
 
-    public DummyLoginManager(IHttpContextAccessor httpContextAccessor)
-    {
-        context = httpContextAccessor?.HttpContext ?? throw new NotSupportedException("I need HttpContext. Njom njom njom");
-    }
+    public DummyLoginManager(IHttpContextAccessor httpContextAccessor) => context = httpContextAccessor?.HttpContext ?? throw new NotSupportedException("I need HttpContext. Njom njom njom");
 
     public async Task SignOutAsync(string redirectUri = "/")
     {

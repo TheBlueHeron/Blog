@@ -21,7 +21,7 @@ public class BookmarksTests : SqlDatabaseTestBase<BlogPost>
         var nonBookmarkedBlogPost = new BlogPostBuilder().WithTitle("Non-Bookmarked Post").Build();
         await Repository.StoreAsync(bookmarkedBlogPost);
         await Repository.StoreAsync(nonBookmarkedBlogPost);
-        bookmarkService.GetBookmarkedPostIds().Returns(new List<string> { bookmarkedBlogPost.Id });
+        bookmarkService.GetBookmarkedPostIds().Returns([bookmarkedBlogPost.Id]);
         ctx.Services.AddScoped(_ => Repository);
         ctx.Services.AddScoped(_ => bookmarkService);
 
@@ -29,7 +29,7 @@ public class BookmarksTests : SqlDatabaseTestBase<BlogPost>
         var cut = ctx.Render<Blog.Web.Features.Bookmarks.Bookmarks>();
         
         // Assert
-        cut.WaitForElement(".blog-card");
+        await cut.WaitForElementAsync(".blog-card");
         var blogPosts = cut.FindComponents<ShortBlogPost>();
         
         blogPosts.ShouldHaveSingleItem();
@@ -44,14 +44,14 @@ public class BookmarksTests : SqlDatabaseTestBase<BlogPost>
         var bookmarkService = Substitute.For<IBookmarkService>();
         var bookmarkedBlogPost = new BlogPostBuilder().WithTitle("Bookmarked Post").Build();
         await Repository.StoreAsync(bookmarkedBlogPost);
-        bookmarkService.GetBookmarkedPostIds().Returns(new List<string> { bookmarkedBlogPost.Id });
+        bookmarkService.GetBookmarkedPostIds().Returns([bookmarkedBlogPost.Id]);
         bookmarkService.IsBookmarked(bookmarkedBlogPost.Id).Returns(true);
         ctx.Services.AddScoped(_ => Repository);
         ctx.Services.AddScoped(_ => bookmarkService);
         
         // Act
         var cut = ctx.Render<Blog.Web.Features.Bookmarks.Bookmarks>();
-        cut.WaitForElement(".blog-card");
+        await cut.WaitForElementAsync(".blog-card");
         
         // Find and click the bookmark button
         var bookmarkButton = cut.FindComponent<BookmarkButton>().Find("button");
@@ -62,12 +62,12 @@ public class BookmarksTests : SqlDatabaseTestBase<BlogPost>
     }
     
     [Fact]
-    public void ShouldDisplayMessageWhenNoBookmarksExist()
+    public async Task ShouldDisplayMessageWhenNoBookmarksExist()
     {
         // Arrange
         using var ctx = new BunitContext();
         var bookmarkService = Substitute.For<IBookmarkService>();
-        bookmarkService.GetBookmarkedPostIds().Returns(new List<string>());
+        bookmarkService.GetBookmarkedPostIds().Returns([]);
         ctx.Services.AddScoped(_ => Repository);
         ctx.Services.AddScoped(_ => bookmarkService);
         
@@ -75,7 +75,7 @@ public class BookmarksTests : SqlDatabaseTestBase<BlogPost>
         var cut = ctx.Render<Blog.Web.Features.Bookmarks.Bookmarks>();
         
         // Assert
-        cut.WaitForElement("h4");
+        await cut.WaitForElementAsync("h4");
         cut.Find("h4").TextContent.ShouldBe("No bookmarks yet!");
         cut.FindComponents<ShortBlogPost>().Count.ShouldBe(0);
     }

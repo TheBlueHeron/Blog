@@ -16,10 +16,7 @@ public sealed class Repository<TEntity> : IRepository<TEntity>
     private readonly IMongoDatabase database;
     private IMongoCollection<TEntity> Collection => database.GetCollection<TEntity>(typeof(TEntity).Name);
 
-    public Repository(IMongoDatabase database)
-    {
-        this.database = database;
-    }
+    public Repository(IMongoDatabase database) => this.database = database;
 
     public async ValueTask<HealthCheckResult> PerformHealthCheckAsync()
     {

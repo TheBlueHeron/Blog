@@ -13,10 +13,7 @@ public class AzureBlobStorageService : IBlobUploadService
 {
     private readonly IOptions<UploadConfiguration> azureBlobStorageConfiguration;
 
-    public AzureBlobStorageService(IOptions<UploadConfiguration> azureBlobStorageConfiguration)
-    {
-        this.azureBlobStorageConfiguration = azureBlobStorageConfiguration;
-    }
+    public AzureBlobStorageService(IOptions<UploadConfiguration> azureBlobStorageConfiguration) => this.azureBlobStorageConfiguration = azureBlobStorageConfiguration;
 
     public async Task<string> UploadFileAsync(string fileName, Stream fileStream, UploadOptions options)
     {

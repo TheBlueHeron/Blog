@@ -14,10 +14,7 @@ public sealed class Repository<TEntity> : IRepository<TEntity>
 {
     private readonly IDocumentStore documentStore;
 
-    public Repository(IDocumentStore documentStore)
-    {
-        this.documentStore = documentStore;
-    }
+    public Repository(IDocumentStore documentStore) => this.documentStore = documentStore;
 
     public async ValueTask<HealthCheckResult> PerformHealthCheckAsync()
     {

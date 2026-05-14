@@ -26,7 +26,7 @@ public class ArchivePageTests : SqlDatabaseTestBase<BlogPost>
 
         var cut = ctx.Render<ArchivePage>();
 
-        cut.WaitForElements("h2");
+        await cut.WaitForElementsAsync("h2");
         var yearHeader = cut.FindAll("h2");
         yearHeader.Count.ShouldBe(2);
         yearHeader[0].TextContent.ShouldContain("2022");
@@ -50,7 +50,7 @@ public class ArchivePageTests : SqlDatabaseTestBase<BlogPost>
 
         var cut = ctx.Render<ArchivePage>();
 
-        cut.WaitForElements("h2");
+        await cut.WaitForElementsAsync("h2");
         cut.FindAll("h2").ShouldHaveSingleItem();
     }
 
@@ -64,7 +64,7 @@ public class ArchivePageTests : SqlDatabaseTestBase<BlogPost>
 
         var cut = ctx.Render<ArchivePage>();
 
-        cut.WaitForElements("h2");
+        await cut.WaitForElementsAsync("h2");
         cut.Find("h3").TextContent.ShouldBe("Archive (2 posts)");
     }
 
@@ -91,13 +91,10 @@ public class ArchivePageTests : SqlDatabaseTestBase<BlogPost>
         ogData.Title.ShouldContain("Archive");
     }
 
-    private static BlogPost CreateBlogPost(DateTime date, string title)
-    {
-        return new BlogPostBuilder()
+    private static BlogPost CreateBlogPost(DateTime date, string title) => new BlogPostBuilder()
             .WithTitle(title)
             .WithUpdatedDate(date)
             .Build();
-    }
 
     private sealed class SlowRepository : IRepository<BlogPost>
     {

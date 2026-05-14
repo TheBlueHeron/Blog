@@ -11,12 +11,9 @@ namespace LinkDotNet.Blog.IntegrationTests.Web.Features.Admin.BlogPostEditor;
 
 public class BlogPostVersionServiceTests : SqlDatabaseTestBase<BlogPost>
 {
-    private readonly IBlogPostVersionService sut;
+    private readonly BlogPostVersionService sut;
 
-    public BlogPostVersionServiceTests()
-    {
-        sut = new BlogPostVersionService(DbContextFactory, Repository);
-    }
+    public BlogPostVersionServiceTests() => sut = new BlogPostVersionService(DbContextFactory, Repository);
 
     [Fact]
     public async Task SaveNewVersionAsync_CreatesSnapshotOfCurrentStateBeforeUpdate()

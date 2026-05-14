@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Blazored.Toast.Services;
@@ -40,10 +40,10 @@ public class SkillTableTests : SqlDatabaseTestBase<Skill>
             p.Add(s => s.ShowAdminActions, true));
         await cut.Find("button").ClickAsync();
         var dialog = cut.FindComponent<AddSkillDialog>();
-        dialog.Find("#title").Change("C#");
-        dialog.Find("#image").Change("Url");
-        dialog.Find("#capability").Change("capability");
-        dialog.Find("#proficiency").Change(ProficiencyLevel.Expert.Key);
+        await dialog.Find("#title").ChangeAsync("C#");
+        await dialog.Find("#image").ChangeAsync("Url");
+        await dialog.Find("#capability").ChangeAsync("capability");
+        await dialog.Find("#proficiency").ChangeAsync(ProficiencyLevel.Expert.Key);
 
         await dialog.Find("form").SubmitAsync();
 
@@ -82,8 +82,7 @@ public class SkillTableTests : SqlDatabaseTestBase<Skill>
         ctx.Services.AddScoped(_ => Substitute.For<IToastService>());
         var cut = ctx.Render<SkillTable>(p =>
             p.Add(s => s.ShowAdminActions, true));
-        cut.WaitForElement(".skill-tag");
-
+        await cut.WaitForElementAsync(".skill-tag");
         await cut.FindAll(".skill-tag")[0].DragAsync();
         await cut.FindAll(".proficiency-level")[1].DropAsync();
 
@@ -103,8 +102,7 @@ public class SkillTableTests : SqlDatabaseTestBase<Skill>
         ctx.Services.AddScoped(_ => Substitute.For<IToastService>());
         var cut = ctx.Render<SkillTable>(p =>
             p.Add(s => s.ShowAdminActions, true));
-        cut.WaitForElement(".skill-tag");
-
+        await cut.WaitForElementAsync(".skill-tag");
         await cut.FindAll(".skill-tag")[0].DragAsync();
         await cut.FindAll(".proficiency-level")[0].DropAsync();
 

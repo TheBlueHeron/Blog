@@ -38,8 +38,5 @@ public sealed class Migration11To12 : IMigration
         return hasChanges;
     }
 
-    public string GetDescription()
-    {
-        return "Adds ShowBuildInformation setting to control build information display.";
-    }
+    public string GetDescription() => "Adds ShowBuildInformation setting to control build information display.";
 }

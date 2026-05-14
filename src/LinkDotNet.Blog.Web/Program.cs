@@ -1,8 +1,9 @@
 using System.Threading.Tasks;
 using Blazored.Toast;
 using HealthChecks.UI.Client;
-using LinkDotNet.Blog.Web.Authentication.OpenIdConnect;
 using LinkDotNet.Blog.Web.Authentication.Dummy;
+using LinkDotNet.Blog.Web.Authentication.OpenIdConnect;
+using LinkDotNet.Blog.Web.Features.DummyData;
 using LinkDotNet.Blog.Web.RegistrationExtensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -53,7 +54,13 @@ public class Program
 
         if (builder.Environment.IsDevelopment())
         {
+            // This fakes the whole authentication process and logs in every user automatically.
             builder.Services.UseDummyAuthentication();
+
+            // This seeds some dummy data into the database for local development.
+            // It also overrides any real database configuration to use an in-memory database.
+            // So on restart (or removing this line) all data will be lost.
+            //builder.Services.UseDummyData()
         }
         else
         {

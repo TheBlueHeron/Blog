@@ -38,8 +38,5 @@ public sealed class Migration12To13 : IMigration
         return hasChanges;
     }
 
-    public string GetDescription()
-    {
-        return "Adds EnableTagDiscoveryPanel setting that controls whether the Tag Discovery panel is enabled in the UI.";
-    }
+    public string GetDescription() => "Adds EnableTagDiscoveryPanel setting that controls whether the Tag Discovery panel is enabled in the UI.";
 }

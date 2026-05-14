@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using LinkDotNet.Blog.Domain;
 using LinkDotNet.Blog.TestUtilities;
@@ -22,7 +22,7 @@ public class SearchByTagTests : SqlDatabaseTestBase<BlogPost>
         await AddBlogPostWithTagAsync("Tag 2");
         RegisterServices(ctx);
         var cut = ctx.Render<SearchByTagPage>(p => p.Add(s => s.Tag, "Tag 1"));
-        cut.WaitForElement(".blog-card");
+        await cut.WaitForElementAsync(".blog-card");
 
         var tags = cut.FindAll(".blog-card");
 
@@ -36,7 +36,7 @@ public class SearchByTagTests : SqlDatabaseTestBase<BlogPost>
         await AddBlogPostWithTagAsync("C#");
         RegisterServices(ctx);
         var cut = ctx.Render<SearchByTagPage>(p => p.Add(s => s.Tag, Uri.EscapeDataString("C#")));
-        cut.WaitForElement(".blog-card");
+        await cut.WaitForElementAsync(".blog-card");
 
         var tags = cut.FindAll(".blog-card");
 

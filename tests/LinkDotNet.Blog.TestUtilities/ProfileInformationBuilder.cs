@@ -26,13 +26,10 @@ public class ProfileInformationBuilder
         return this;
     }
 
-    public ProfileInformation Build()
+    public ProfileInformation Build() => new()
     {
-        return new ProfileInformation
-        {
-            Name = name,
-            Heading = heading,
-            ProfilePictureUrl = profilePictureUrl,
-        };
-    }
+        Name = name,
+        Heading = heading,
+        ProfilePictureUrl = profilePictureUrl,
+    };
 }

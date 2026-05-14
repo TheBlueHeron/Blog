@@ -12,16 +12,13 @@ public sealed class BlogPostTemplate : Entity
 
     public string Content { get; private set; } = default!;
 
-    public static BlogPostTemplate Create(string name, string title, string shortDescription, string content)
+    public static BlogPostTemplate Create(string name, string title, string shortDescription, string content) => new()
     {
-        return new BlogPostTemplate
-        {
-            Name = name,
-            Title = title,
-            ShortDescription = shortDescription,
-            Content = content
-        };
-    }
+        Name = name,
+        Title = title,
+        ShortDescription = shortDescription,
+        Content = content
+    };
 
     public void Update(string name, string title, string shortDescription, string content)
     {

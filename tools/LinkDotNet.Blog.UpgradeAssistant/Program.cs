@@ -1,4 +1,4 @@
-﻿using CommandLine;
+using CommandLine;
 using LinkDotNet.Blog.UpgradeAssistant;
 using Spectre.Console;
 
@@ -82,10 +82,9 @@ static List<string> GetAppsettingsFiles(string path)
 
     if (Directory.Exists(path))
     {
-        return Directory.GetFiles(path, "appsettings*.json", SearchOption.TopDirectoryOnly)
+        return [.. Directory.GetFiles(path, "appsettings*.json", SearchOption.TopDirectoryOnly)
             .Where(f => !Path.GetFileName(f).Equals("appsettings.json", StringComparison.OrdinalIgnoreCase))
-            .OrderBy(f => f)
-            .ToList();
+            .OrderBy(f => f)];
     }
 
     return [];

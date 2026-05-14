@@ -16,9 +16,7 @@ public sealed class TagQueryService(
 {
     private const string TagCacheKey = "TagUsageList";
 
-    public async Task<IReadOnlyList<TagCount>> GetAllOrderedByUsageAsync()
-    {
-        return await fusionCache.GetOrSetAsync(
+    public async Task<IReadOnlyList<TagCount>> GetAllOrderedByUsageAsync() => await fusionCache.GetOrSetAsync(
         TagCacheKey,
         async _ => await LoadTagsAsync(),
         options =>
@@ -26,7 +24,6 @@ public sealed class TagQueryService(
             options.SetDuration(TimeSpan.FromMinutes(
                 appConfiguration.Value.FirstPageCacheDurationInMinutes));
         });
-    }
 
     private async Task<IReadOnlyList<TagCount>> LoadTagsAsync()
     {

@@ -15,7 +15,7 @@ public sealed class BlogPostRepositoryTests : RavenTestDriver
 {
     private static bool serverRunning;
     private readonly IDocumentStore store;
-    private readonly IRepository<BlogPost> sut;
+    private readonly Repository<BlogPost> sut;
 
     public BlogPostRepositoryTests()
     {
@@ -27,7 +27,7 @@ public sealed class BlogPostRepositoryTests : RavenTestDriver
     [Fact]
     public async Task ShouldLoadBlogPost()
     {
-        var blogPost = BlogPost.Create("Title", "Subtitle", "Content", "url", true, tags: new[] { "Tag 1", "Tag 2" }, authorName: "Test Author");
+        var blogPost = BlogPost.Create("Title", "Subtitle", "Content", "url", true, tags: ["Tag 1", "Tag 2"], authorName: "Test Author");
         await SaveBlogPostAsync(blogPost);
 
         var blogPostFromRepo = await sut.GetByIdAsync(blogPost.Id);
@@ -48,7 +48,7 @@ public sealed class BlogPostRepositoryTests : RavenTestDriver
     [Fact]
     public async Task ShouldSetAuthorNameAsNullWhenNotGiven()
     {
-        var blogPost = BlogPost.Create("Title", "Subtitle", "Content", "url", true, tags: new[] { "Tag 1", "Tag 2" });
+        var blogPost = BlogPost.Create("Title", "Subtitle", "Content", "url", true, tags: ["Tag 1", "Tag 2"]);
         await SaveBlogPostAsync(blogPost);
 
         var blogPostFromRepo = await sut.GetByIdAsync(blogPost.Id);
@@ -100,7 +100,7 @@ public sealed class BlogPostRepositoryTests : RavenTestDriver
     [Fact]
     public async Task ShouldSaveBlogPost()
     {
-        var blogPost = BlogPost.Create("Title", "Subtitle", "Content", "url", true, tags: new[] { "Tag 1", "Tag 2" });
+        var blogPost = BlogPost.Create("Title", "Subtitle", "Content", "url", true, tags: ["Tag 1", "Tag 2"]);
 
         await sut.StoreAsync(blogPost);
 
@@ -120,7 +120,7 @@ public sealed class BlogPostRepositoryTests : RavenTestDriver
     [Fact]
     public async Task ShouldGetAllBlogPosts()
     {
-        var blogPost = BlogPost.Create("Title", "Subtitle", "Content", "url", true, tags: new[] { "Tag 1", "Tag 2" });
+        var blogPost = BlogPost.Create("Title", "Subtitle", "Content", "url", true, tags: ["Tag 1", "Tag 2"]);
         await SaveBlogPostAsync(blogPost);
 
         var blogPostsFromRepo = await sut.GetAllAsync();

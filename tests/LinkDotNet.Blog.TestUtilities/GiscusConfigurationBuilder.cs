@@ -33,14 +33,11 @@ public class GiscusConfigurationBuilder
         return this;
     }
 
-    public GiscusConfiguration Build()
+    public GiscusConfiguration Build() => new()
     {
-        return new GiscusConfiguration
-        {
-            Repository = repository,
-            RepositoryId = repositoryId,
-            Category = category,
-            CategoryId = categoryId,
-        };
-    }
+        Repository = repository,
+        RepositoryId = repositoryId,
+        Category = category,
+        CategoryId = categoryId,
+    };
 }

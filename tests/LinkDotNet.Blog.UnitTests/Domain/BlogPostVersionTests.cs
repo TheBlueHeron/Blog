@@ -53,18 +53,14 @@ public class BlogPostVersionTests
     }
 
     [Fact]
-    public void CreateSnapshot_DoesNotIncludeLikes()
-    {
+    public void CreateSnapshot_DoesNotIncludeLikes() =>
         // Likes are on BlogPost but must never appear on BlogPostVersion
         typeof(BlogPostVersion).GetProperty("Likes").ShouldBeNull();
-    }
 
     [Fact]
-    public void CreateSnapshot_DoesNotIncludeScheduledPublishDate()
-    {
+    public void CreateSnapshot_DoesNotIncludeScheduledPublishDate() =>
         // ScheduledPublishDate is editorial state, not part of content history
         typeof(BlogPostVersion).GetProperty("ScheduledPublishDate").ShouldBeNull();
-    }
 
     [Fact]
     public void CreateSnapshot_ThrowsForNullBlogPost()

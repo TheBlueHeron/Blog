@@ -1,4 +1,4 @@
-﻿using LinkDotNet.Blog.Domain;
+using LinkDotNet.Blog.Domain;
 
 namespace LinkDotNet.Blog.TestUtilities;
 
@@ -33,8 +33,5 @@ public class SkillBuilder
         return this;
     }
 
-    public Skill Build()
-    {
-        return Skill.Create(skill, iconUrl, capability, proficiencyLevel.Key);
-    }
+    public Skill Build() => Skill.Create(skill, iconUrl, capability, proficiencyLevel.Key);
 }

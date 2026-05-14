@@ -507,7 +507,7 @@ public class MarkdownTextAreaTests : BunitContext
 
         var inputFile = cut.FindComponent<InputFile>();
         await cut.InvokeAsync(() => inputFile.Instance.OnChange.InvokeAsync(
-            new InputFileChangeEventArgs(new[] { mockFile })));
+            new InputFileChangeEventArgs([mockFile])));
 
         toastService.Received(1).ShowError(
             Arg.Is<string>(msg => msg.Contains("large-image.jpg") && msg.Contains("512 KB")));

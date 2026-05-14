@@ -11,16 +11,13 @@ public sealed class MigrationManager
 
     public MigrationManager(IEnumerable<IMigration> migrations)
     {
-        this.migrations = migrations.ToList();
+        this.migrations = [.. migrations];
         currentVersion = DetermineCurrentVersionFromMigrations();
     }
 
-    private string DetermineCurrentVersionFromMigrations()
-    {
-        return migrations.Count > 0
+    private string DetermineCurrentVersionFromMigrations() => migrations.Count > 0
             ? migrations.Max(m => m.ToVersion) ?? "11.0"
             : "11.0";
-    }
 
     public async Task<bool> MigrateFileAsync(string filePath, bool dryRun, string backupDirectory)
     {
@@ -120,17 +117,11 @@ public sealed class MigrationManager
         return true;
     }
 
-    private static bool IsVersionControlledAppsettingsFile(string fileName)
-    {
-        return fileName.Equals("appsettings.json", StringComparison.OrdinalIgnoreCase);
-    }
+    private static bool IsVersionControlledAppsettingsFile(string fileName) => fileName.Equals("appsettings.json", StringComparison.OrdinalIgnoreCase);
 
-    private static string? GetVersion(JsonDocument document)
-    {
-        return document.RootElement.TryGetProperty("ConfigVersion", out var versionElement)
+    private static string? GetVersion(JsonDocument document) => document.RootElement.TryGetProperty("ConfigVersion", out var versionElement)
             ? versionElement.GetString()
             : null;
-    }
 
     private List<IMigration> GetApplicableMigrations(string? currentVersion)
     {

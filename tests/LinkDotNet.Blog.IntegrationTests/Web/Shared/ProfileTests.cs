@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using LinkDotNet.Blog.Domain;
@@ -150,16 +150,13 @@ public class ProfileTests : BunitContext
 
     private static void SetupGetAll(
         IRepository<ProfileInformationEntry> repoMock,
-        params ProfileInformationEntry[] entries)
-    {
-        repoMock.GetAllAsync(
+        params ProfileInformationEntry[] entries) => repoMock.GetAllAsync(
                 Arg.Any<Expression<Func<ProfileInformationEntry, bool>>>(),
                 Arg.Any<Expression<Func<ProfileInformationEntry, object>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<int>(),
                 Arg.Any<int>())
             .Returns(new PagedList<ProfileInformationEntry>(entries, entries.Length, 1, 100));
-    }
 
     private (IRepository<ProfileInformationEntry> repoMock, ISortOrderCalculator calcMock) RegisterServices()
     {

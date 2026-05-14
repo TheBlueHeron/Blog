@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.Common;
 using System.Threading.Tasks;
 using LinkDotNet.Blog.Domain;
@@ -13,7 +13,7 @@ namespace LinkDotNet.Blog.IntegrationTests;
 public abstract class SqlDatabaseTestBase<TEntity> : IAsyncDisposable
     where TEntity : Entity
 {
-    private readonly DbConnection connection;
+    private readonly SqliteConnection connection;
 
     protected SqlDatabaseTestBase()
     {
@@ -41,7 +41,7 @@ public abstract class SqlDatabaseTestBase<TEntity> : IAsyncDisposable
         await connection.DisposeAsync();
     }
 
-    private static DbConnection CreateInMemoryConnection()
+    private static SqliteConnection CreateInMemoryConnection()
     {
         var connection = new SqliteConnection(string.Empty);
 

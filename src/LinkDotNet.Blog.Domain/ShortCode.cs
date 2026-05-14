@@ -21,8 +21,5 @@ public class ShortCode : Entity
         Name = name;
     }
 
-    public static ShortCode Create(string name, string content)
-    {
-        return new ShortCode(name, content);
-    }
+    public static ShortCode Create(string name, string content) => new(name, content);
 }

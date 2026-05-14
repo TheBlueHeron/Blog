@@ -10,10 +10,7 @@ public class DatabaseHealthCheck : IHealthCheck
 {
     private readonly IRepository<BlogPost> repository;
 
-    public DatabaseHealthCheck(IRepository<BlogPost> repository)
-    {
-        this.repository = repository;
-    }
+    public DatabaseHealthCheck(IRepository<BlogPost> repository) => this.repository = repository;
 
     public Task<HealthCheckResult> CheckHealthAsync(
         HealthCheckContext context,

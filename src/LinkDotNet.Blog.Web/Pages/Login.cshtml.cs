@@ -8,13 +8,7 @@ public sealed partial class LoginModel : PageModel
 {
     private readonly ILoginManager loginManager;
 
-    public LoginModel(ILoginManager loginManager)
-    {
-        this.loginManager = loginManager;
-    }
+    public LoginModel(ILoginManager loginManager) => this.loginManager = loginManager;
 
-    public async Task OnGet(string redirectUri)
-    {
-        await loginManager.SignInAsync(redirectUri);
-    }
+    public async Task OnGet(string redirectUri) => await loginManager.SignInAsync(redirectUri);
 }

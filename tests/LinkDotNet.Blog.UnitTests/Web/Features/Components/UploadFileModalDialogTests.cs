@@ -10,7 +10,7 @@ public class UploadFileModalDialogTests : BunitContext
     {
         var cut = Render<UploadFileModalDialog>();
         var task = cut.InvokeAsync(() => cut.Instance.ShowAsync("Filename.png"));
-        cut.Find("#cache").Change(false);
+        await cut.Find("#cache").ChangeAsync(false);
         
         await cut.Find("form").SubmitAsync();
 

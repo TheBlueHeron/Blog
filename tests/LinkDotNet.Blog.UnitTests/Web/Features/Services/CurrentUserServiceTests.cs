@@ -24,7 +24,7 @@ public class CurrentUserServiceTests : BunitContext
     {
         var claims = new List<Claim>()
         {
-            new Claim(claimType, "Test Author")
+            new(claimType, "Test Author")
         };
 
         fakeAuthenticationStateProvider.TriggerAuthenticationStateChanged("Steven", claims: claims);

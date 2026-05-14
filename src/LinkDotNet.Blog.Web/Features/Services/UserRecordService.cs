@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using LinkDotNet.Blog.Domain;
 using LinkDotNet.Blog.Infrastructure.Persistence;
@@ -30,6 +30,7 @@ public sealed partial class UserRecordService : IUserRecordService
         this.logger = logger;
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Unfeasible")]
     public async ValueTask StoreUserRecordAsync()
     {
         try

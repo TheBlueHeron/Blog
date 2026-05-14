@@ -15,7 +15,7 @@ public sealed class BlogPostRepositoryTests : SqlDatabaseTestBase<BlogPost>
     [Fact]
     public async Task ShouldLoadBlogPost()
     {
-        var blogPost = BlogPost.Create("Title", "Subtitle", "Content", "url", true, tags: new[] { "Tag 1", "Tag 2" }, authorName: "Test Author");
+        var blogPost = BlogPost.Create("Title", "Subtitle", "Content", "url", true, tags: ["Tag 1", "Tag 2"], authorName: "Test Author");
         await DbContext.BlogPosts.AddAsync(blogPost, TestContext.Current.CancellationToken);
         await DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
@@ -37,7 +37,7 @@ public sealed class BlogPostRepositoryTests : SqlDatabaseTestBase<BlogPost>
     [Fact]
     public async Task ShouldLoadAuthorNameAsNullWhenNotGiven()
     {
-        var blogPost = BlogPost.Create("Title", "Subtitle", "Content", "url", true, tags: new[] { "Tag 1", "Tag 2" });
+        var blogPost = BlogPost.Create("Title", "Subtitle", "Content", "url", true, tags: ["Tag 1", "Tag 2"]);
         await DbContext.BlogPosts.AddAsync(blogPost, TestContext.Current.CancellationToken);
         await DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
@@ -50,7 +50,7 @@ public sealed class BlogPostRepositoryTests : SqlDatabaseTestBase<BlogPost>
     [Fact]
     public async Task ShouldSaveBlogPost()
     {
-        var blogPost = BlogPost.Create("Title", "Subtitle", "Content", "url", true, tags: new[] { "Tag 1", "Tag 2" }, authorName: "Test Author");
+        var blogPost = BlogPost.Create("Title", "Subtitle", "Content", "url", true, tags: ["Tag 1", "Tag 2"], authorName: "Test Author");
 
         await Repository.StoreAsync(blogPost);
 
@@ -74,7 +74,7 @@ public sealed class BlogPostRepositoryTests : SqlDatabaseTestBase<BlogPost>
     [Fact]
     public async Task ShouldSaveAuthorNameAsNullWhenNotGiven()
     {
-        var blogPost = BlogPost.Create("Title", "Subtitle", "Content", "url", true, tags: new[] { "Tag 1", "Tag 2" });
+        var blogPost = BlogPost.Create("Title", "Subtitle", "Content", "url", true, tags: ["Tag 1", "Tag 2"]);
         await Repository.StoreAsync(blogPost);
 
         var blogPostFromContext = await DbContext
@@ -89,7 +89,7 @@ public sealed class BlogPostRepositoryTests : SqlDatabaseTestBase<BlogPost>
     [Fact]
     public async Task ShouldGetAllBlogPosts()
     {
-        var blogPost = BlogPost.Create("Title", "Subtitle", "Content", "url", true, tags: new[] { "Tag 1", "Tag 2" }, authorName: "Test Author");
+        var blogPost = BlogPost.Create("Title", "Subtitle", "Content", "url", true, tags: ["Tag 1", "Tag 2"], authorName: "Test Author");
         await DbContext.BlogPosts.AddAsync(blogPost, TestContext.Current.CancellationToken);
         await DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
@@ -113,7 +113,7 @@ public sealed class BlogPostRepositoryTests : SqlDatabaseTestBase<BlogPost>
     [Fact]
     public async Task ShouldGetAuthorNameAsNullWhenNotGiven()
     {
-        var blogPost = BlogPost.Create("Title", "Subtitle", "Content", "url", true, tags: new[] { "Tag 1", "Tag 2" });
+        var blogPost = BlogPost.Create("Title", "Subtitle", "Content", "url", true, tags: ["Tag 1", "Tag 2"]);
         await DbContext.BlogPosts.AddAsync(blogPost, TestContext.Current.CancellationToken);
         await DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 

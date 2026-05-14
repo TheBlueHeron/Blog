@@ -32,15 +32,12 @@ public class AuthInformationBuilder
         this.provider = provider;
         return this;
     }
-    
-    public AuthInformation Build()
+
+    public AuthInformation Build() => new()
     {
-        return new AuthInformation
-        {
-            ClientId = clientId,
-            ClientSecret = clientSecret,
-            Domain = domain,
-            Provider = provider,
-        };
-    }
+        ClientId = clientId,
+        ClientSecret = clientSecret,
+        Domain = domain,
+        Provider = provider,
+    };
 }

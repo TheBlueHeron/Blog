@@ -61,18 +61,15 @@ public class SupportMeConfigurationBuilder
         return this;
     }
 
-    public SupportMeConfiguration Build()
+    public SupportMeConfiguration Build() => new()
     {
-        return new SupportMeConfiguration
-        {
-            KofiToken = kofiToken,
-            GithubSponsorName = githubSponsorName,
-            PatreonName = patreonName,
-            ShowUnderBlogPost = showUnderBlogPost,
-            ShowUnderIntroduction = showUnderIntroduction,
-            ShowInFooter = showInFooter,
-            ShowSupportMePage = showSupportMePage,
-            SupportMePageDescription = supportMePageDescription,
-        };
-    }
+        KofiToken = kofiToken,
+        GithubSponsorName = githubSponsorName,
+        PatreonName = patreonName,
+        ShowUnderBlogPost = showUnderBlogPost,
+        ShowUnderIntroduction = showUnderIntroduction,
+        ShowInFooter = showInFooter,
+        ShowSupportMePage = showSupportMePage,
+        SupportMePageDescription = supportMePageDescription,
+    };
 }

@@ -9,10 +9,7 @@ public class BookmarkService : IBookmarkService
 {
     private readonly ILocalStorageService localStorageService;
 
-    public BookmarkService(ILocalStorageService localStorageService)
-    {
-        this.localStorageService = localStorageService;
-    }
+    public BookmarkService(ILocalStorageService localStorageService) => this.localStorageService = localStorageService;
 
     public async Task<bool> IsBookmarked(string postId)
     {

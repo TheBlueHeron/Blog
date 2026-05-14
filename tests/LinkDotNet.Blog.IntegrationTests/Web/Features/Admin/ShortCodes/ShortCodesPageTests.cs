@@ -19,15 +19,15 @@ public sealed class ShortCodesPageTests : SqlDatabaseTestBase<ShortCode>
         ctx.Services.AddScoped(_ => Substitute.For<IToastService>());
         ctx.ComponentFactories.Add<MarkdownTextArea, MarkdownFake>();
         var cut = ctx.Render<ShortCodesPage>();
-        cut.Find("#short-code-content").Input("# Text");
-        cut.Find("#short-code-name").Change("ShortName");
+        await cut.Find("#short-code-content").InputAsync("# Text");
+        await cut.Find("#short-code-name").ChangeAsync("ShortName");
         
         await cut.Find("form").SubmitAsync();
         
         var shortCodes = await Repository.GetAllAsync();
         shortCodes.ShouldHaveSingleItem();
-        shortCodes.First().MarkdownContent.ShouldBe("# Text");
-        shortCodes.First().Name.ShouldBe("ShortName");
+        shortCodes[0].MarkdownContent.ShouldBe("# Text");
+        shortCodes[0].Name.ShouldBe("ShortName");
     }
     
     [Fact]
@@ -41,14 +41,14 @@ public sealed class ShortCodesPageTests : SqlDatabaseTestBase<ShortCode>
         ctx.ComponentFactories.Add<MarkdownTextArea, MarkdownFake>();
         var cut = ctx.Render<ShortCodesPage>();
         await cut.Find("#edit-shortcode").ClickAsync();
-        cut.Find("#short-code-content").Input("# New Text");
-        cut.Find("#short-code-name").Change("ShortName");
+        await cut.Find("#short-code-content").InputAsync("# New Text");
+        await cut.Find("#short-code-name").ChangeAsync("ShortName");
         
         await cut.Find("form").SubmitAsync();
         
         var shortCodes = await Repository.GetAllAsync();
         shortCodes.ShouldHaveSingleItem();
-        shortCodes.First().MarkdownContent.ShouldBe("# New Text");
-        shortCodes.First().Name.ShouldBe("ShortName");
+        shortCodes[0].MarkdownContent.ShouldBe("# New Text");
+        shortCodes[0].Name.ShouldBe("ShortName");
     }
 }

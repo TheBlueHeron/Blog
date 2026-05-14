@@ -60,7 +60,7 @@ public sealed class TalksTests : SqlDatabaseTestBase<Talk>, IDisposable
 
         await cut.WaitForComponent<TalkEntry>().Find("#talk-delete").ClickAsync();
 
-        cut.WaitForState(() => !cut.HasComponent<TalkEntry>());
+        await cut.WaitForStateAsync(() => !cut.HasComponent<TalkEntry>());
         cut.HasComponent<TalkEntry>().ShouldBeFalse();
         (await DbContext.Talks.AnyAsync(cancellationToken: TestContext.Current.CancellationToken)).ShouldBeFalse();
     }
@@ -80,8 +80,5 @@ public sealed class TalksTests : SqlDatabaseTestBase<Talk>, IDisposable
         talks[1].Instance.Talk.PublishedDate.ShouldBe(new DateTime(2021, 1, 1));
     }
 
-    public void Dispose()
-    {
-        ctx?.Dispose();
-    }
+    public void Dispose() => ctx?.Dispose();
 }

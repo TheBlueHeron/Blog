@@ -9,7 +9,7 @@ namespace LinkDotNet.Blog.UnitTests.Web.Features.Bookmarks;
 public class BookmarkServiceTests
 {
     private readonly ILocalStorageService localStorageService;
-    private readonly IBookmarkService bookmarkService;
+    private readonly BookmarkService bookmarkService;
 
     public BookmarkServiceTests()
     {

@@ -16,7 +16,7 @@ public class StorageProviderRegistrationExtensionsTests
     };
 
     [Theory]
-    [MemberData(nameof(Data))]
+    [MemberData(nameof(Data), DisableDiscoveryEnumeration = true)]
     public void GivenAlreadyRegisteredRepository_WhenTryingToAddAnotherStorage_ThenException(Action<IServiceCollection> act)
     {
         var services = new ServiceCollection();

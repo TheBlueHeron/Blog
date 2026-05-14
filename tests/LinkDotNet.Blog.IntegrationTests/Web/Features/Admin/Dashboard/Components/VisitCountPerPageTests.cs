@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
@@ -27,7 +27,7 @@ public class VisitCountPerPageTests : SqlDatabaseTestBase<BlogPost>
 
         var cut = ctx.Render<VisitCountPerPage>();
 
-        var elements = cut.WaitForElements("td");
+        var elements = await cut.WaitForElementsAsync("td");
         elements.Count.ShouldBe(3);
         var titleData = elements[0].ChildNodes.Single() as IHtmlAnchorElement;
         titleData.ShouldNotBeNull();
@@ -62,13 +62,13 @@ public class VisitCountPerPageTests : SqlDatabaseTestBase<BlogPost>
 
         await cut.InvokeAsync(() => cut.FindComponent<DateRangeSelectorStub>().Instance.FilterChanged.InvokeAsync(filter));
 
-        var elements = cut.WaitForElements("td");
+        var elements = await cut.WaitForElementsAsync("td");
         elements.Count.ShouldBe(3);
         var titleData = elements[0].ChildNodes.Single() as IHtmlAnchorElement;
         titleData.ShouldNotBeNull();
         titleData.InnerHtml.ShouldBe(blogPost1.Title);
         titleData.Href.ShouldContain($"blogPost/{blogPost1.Id}");
-        cut.WaitForAssertion(() => elements[1].InnerHtml.ShouldBe("1"));
+        await cut.WaitForAssertionAsync(() => elements[1].InnerHtml.ShouldBe("1"));
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public class VisitCountPerPageTests : SqlDatabaseTestBase<BlogPost>
 
         var cut = ctx.Render<VisitCountPerPage>();
 
-        cut.WaitForElement("td");
+        await cut.WaitForElementAsync("td");
         cut.Find("#total-clicks").TextContent.ShouldBe("4 clicks in total");
     }
 
@@ -113,7 +113,7 @@ public class VisitCountPerPageTests : SqlDatabaseTestBase<BlogPost>
 
         var cut = ctx.Render<VisitCountPerPage>();
 
-        cut.WaitForElement("td");
+        await cut.WaitForElementAsync("td");
         cut.Find("#total-clicks").TextContent.ShouldBe("3 clicks in total");
     }
 

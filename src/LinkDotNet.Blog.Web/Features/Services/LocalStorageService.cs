@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -10,10 +10,7 @@ public sealed class LocalStorageService : ILocalStorageService
 {
     private readonly ProtectedLocalStorage localStorage;
 
-    public LocalStorageService(ProtectedLocalStorage localStorage)
-    {
-        this.localStorage = localStorage;
-    }
+    public LocalStorageService(ProtectedLocalStorage localStorage) => this.localStorage = localStorage;
 
     public async ValueTask<bool> ContainsKeyAsync(string key)
     {

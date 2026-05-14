@@ -199,7 +199,7 @@ public class ApplicationConfigurationTests
     public void ShouldSetDefaultBlogPostPerPageIfNotSet()
     {
         var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>())
+            .AddInMemoryCollection([])
             .Build();
 
         var appConfiguration = new ApplicationConfigurationBuilder().Build();

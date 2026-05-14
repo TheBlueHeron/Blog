@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using LinkDotNet.Blog.Domain;
 using LinkDotNet.Blog.TestUtilities;
 using LinkDotNet.Blog.Web.Features.Admin.DraftBlogPost;
@@ -22,7 +22,7 @@ public class DraftBlogPostPageTests : SqlDatabaseTestBase<BlogPost>
         ctx.Services.AddScoped(_ => Repository);
         ctx.Services.AddScoped(_ => Substitute.For<IBookmarkService>());
         var cut = ctx.Render<DraftBlogPostPage>();
-        cut.WaitForElement(".blog-card");
+        await cut.WaitForElementAsync(".blog-card");
 
         var blogPosts = cut.FindComponents<ShortBlogPost>();
 

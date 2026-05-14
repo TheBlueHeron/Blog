@@ -5,8 +5,5 @@ namespace LinkDotNet.Blog.Web.Features.Services.FileUpload;
 
 public class NoopStorageService : IBlobUploadService
 {
-    public Task<string> UploadFileAsync(string fileName, Stream fileStream, UploadOptions options)
-    {
-        return Task.FromResult("No Storage Service was configured. Nothing was uploaded");
-    }
+    public Task<string> UploadFileAsync(string fileName, Stream fileStream, UploadOptions options) => Task.FromResult("No Storage Service was configured. Nothing was uploaded");
 }

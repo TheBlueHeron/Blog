@@ -27,7 +27,7 @@ public class IndexTests : SqlDatabaseTestBase<BlogPost>
         ctx.JSInterop.Mode = JSRuntimeMode.Loose;
         RegisterComponents(ctx);
         var cut = ctx.Render<Index>();
-        cut.WaitForElement(".blog-card");
+        await cut.WaitForElementAsync(".blog-card");
 
         var blogPosts = cut.FindComponents<ShortBlogPost>();
 
@@ -47,7 +47,7 @@ public class IndexTests : SqlDatabaseTestBase<BlogPost>
         ctx.JSInterop.Mode = JSRuntimeMode.Loose;
         RegisterComponents(ctx);
         var cut = ctx.Render<Index>();
-        cut.WaitForElement(".blog-card");
+        await cut.WaitForElementAsync(".blog-card");
 
         var blogPosts = cut.FindComponents<ShortBlogPost>();
 
@@ -63,7 +63,7 @@ public class IndexTests : SqlDatabaseTestBase<BlogPost>
         ctx.JSInterop.Mode = JSRuntimeMode.Loose;
         RegisterComponents(ctx);
         var cut = ctx.Render<Index>();
-        cut.WaitForElement(".blog-card");
+        await cut.WaitForElementAsync(".blog-card");
 
         var blogPosts = cut.FindComponents<ShortBlogPost>();
 
@@ -81,7 +81,7 @@ public class IndexTests : SqlDatabaseTestBase<BlogPost>
         var cut = ctx.Render<Index>(
             p => p.Add(s => s.Page, 2));
 
-        cut.WaitForElement(".blog-card");
+        await cut.WaitForElementAsync(".blog-card");
         var blogPosts = cut.FindComponents<ShortBlogPost>();
         blogPosts.ShouldHaveSingleItem();
     }
@@ -99,7 +99,7 @@ public class IndexTests : SqlDatabaseTestBase<BlogPost>
         ctx.JSInterop.Mode = JSRuntimeMode.Loose;
         RegisterComponents(ctx);
         var cut = ctx.Render<Index>();
-        cut.WaitForElement(".blog-card");
+        await cut.WaitForElementAsync(".blog-card");
 
         var tags = cut.FindComponent<ShortBlogPost>().FindAll(".goto-tag");
 
@@ -137,7 +137,7 @@ public class IndexTests : SqlDatabaseTestBase<BlogPost>
         var cut = ctx.Render<Index>(p => p.Add(
             i => i.Page, page));
 
-        cut.WaitForElement(".blog-card");
+        await cut.WaitForElementAsync(".blog-card");
         cut.FindAll(".blog-card").Count.ShouldBe(10);
     }
 
@@ -154,7 +154,7 @@ public class IndexTests : SqlDatabaseTestBase<BlogPost>
         RegisterComponents(ctx, useMultiAuthorMode: true);
         var cut = ctx.Render<Index>();
 
-        cut.WaitForElement("li:contains('Test Author')");
+        await cut.WaitForElementAsync("li:contains('Test Author')");
         cut.FindAll("li:contains('Test Author')").ShouldHaveSingleItem();
         cut.FindAll("i.user-tie").ShouldHaveSingleItem();
     }
@@ -195,9 +195,7 @@ public class IndexTests : SqlDatabaseTestBase<BlogPost>
     }
 
     private static (ApplicationConfiguration ApplicationConfiguration, Introduction Introduction)
-        CreateSampleAppConfiguration(string? profilePictureUri = null, bool useMultiAuthorMode = false)
-    {
-        return (new ApplicationConfigurationBuilder()
+        CreateSampleAppConfiguration(string? profilePictureUri = null, bool useMultiAuthorMode = false) => (new ApplicationConfigurationBuilder()
                 .WithBlogName(string.Empty)
                 .WithBlogPostsPerPage(10)
                 .WithUseMultiAuthorMode(useMultiAuthorMode)
@@ -208,7 +206,6 @@ public class IndexTests : SqlDatabaseTestBase<BlogPost>
                 BackgroundUrl = string.Empty,
                 ProfilePictureUrl = profilePictureUri ?? string.Empty,
             });
-    }
 
     private async Task CreatePublishedBlogPosts(int amount)
     {

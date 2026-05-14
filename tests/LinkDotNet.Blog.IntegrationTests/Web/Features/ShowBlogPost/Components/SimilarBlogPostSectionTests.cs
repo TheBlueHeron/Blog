@@ -35,7 +35,7 @@ public class SimilarBlogPostSectionTests : SqlDatabaseTestBase<BlogPost>
         
         var cut = context.Render<SimilarBlogPostSection>(p => p.Add(s => s.BlogPost, blogPost1));
 
-        var elements = cut.WaitForElements("h6");
+        var elements = await cut.WaitForElementsAsync("h6");
         elements.Count.ShouldBe(2);
         elements.ShouldContain(p => p.TextContent == "Title 2");
         elements.ShouldContain(p => p.TextContent == "Title 3");

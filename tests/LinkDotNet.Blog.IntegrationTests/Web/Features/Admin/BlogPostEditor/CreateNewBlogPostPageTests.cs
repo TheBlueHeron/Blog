@@ -165,7 +165,7 @@ public class CreateNewBlogPostPageTests : SqlDatabaseTestBase<BlogPost>
 
         // Act
         var templateButton = cut.FindAll("button.dropdown-item").First(b => b.TextContent.Contains("My Template"));
-        templateButton.Click();
+        await templateButton.ClickAsync();
 
         // Assert
         cut.Find("#title").Attributes["value"]!.Value.ShouldBe("Title");

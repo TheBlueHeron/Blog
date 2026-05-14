@@ -1,4 +1,4 @@
-﻿using LinkDotNet.Blog.Domain;
+using LinkDotNet.Blog.Domain;
 
 namespace LinkDotNet.Blog.TestUtilities;
 
@@ -19,8 +19,5 @@ public class ProfileInformationEntryBuilder
         return this;
     }
 
-    public ProfileInformationEntry Build()
-    {
-        return ProfileInformationEntry.Create(content, sortOrder);
-    }
+    public ProfileInformationEntry Build() => ProfileInformationEntry.Create(content, sortOrder);
 }

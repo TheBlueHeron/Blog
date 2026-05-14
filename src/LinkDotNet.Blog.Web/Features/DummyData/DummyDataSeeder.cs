@@ -12,6 +12,8 @@ namespace LinkDotNet.Blog.Web.Features.DummyData;
 
 internal sealed class DummyDataSeeder : IHostedService
 {
+    private const string PREVIEWIMAGEURL = "https://via.placeholder.com/800x400";
+
     private readonly IServiceProvider serviceProvider;
     private readonly DummyDataOptions options;
 
@@ -111,7 +113,7 @@ internal sealed class DummyDataSeeder : IHostedService
                 title,
                 shortDescription,
                 loremIpsum,
-                "https://via.placeholder.com/800x400",
+                PREVIEWIMAGEURL,
                 true,
                 DateTime.UtcNow.AddDays(-i),
                 null,

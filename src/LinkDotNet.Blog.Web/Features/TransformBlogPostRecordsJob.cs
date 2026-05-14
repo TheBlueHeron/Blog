@@ -38,9 +38,7 @@ public sealed partial class TransformBlogPostRecordsJob : IJob
 
     private static BlogPostRecord[] GetBlogPostRecords(
         IEnumerable<BlogPost> blogPosts,
-        IEnumerable<UserRecord> userRecords)
-    {
-        return blogPosts
+        IEnumerable<UserRecord> userRecords) => [.. blogPosts
             .SelectMany(blogPost => userRecords
                 .Where(userRecord => GetBlogPostId(userRecord) == blogPost.Id)
                 .GroupBy(userRecord => userRecord.DateClicked)
@@ -50,15 +48,11 @@ public sealed partial class TransformBlogPostRecordsJob : IJob
                     BlogPostId = blogPost.Id,
                     DateClicked = group.Key,
                     Clicks = group.Count()
-                }))
-            .ToArray();
-    }
+                }))];
 
     private static IEnumerable<BlogPostRecord> MergeRecords(
         IEnumerable<BlogPostRecord> oldBlogPostRecords,
-        IEnumerable<BlogPostRecord> newBlogPostRecords)
-    {
-        return oldBlogPostRecords.Concat(newBlogPostRecords)
+        IEnumerable<BlogPostRecord> newBlogPostRecords) => oldBlogPostRecords.Concat(newBlogPostRecords)
             .GroupBy(x => new { x.BlogPostId, x.DateClicked })
             .Select(g => new BlogPostRecord
             {
@@ -66,7 +60,6 @@ public sealed partial class TransformBlogPostRecordsJob : IJob
                 DateClicked = g.Key.DateClicked,
                 Clicks = g.Sum(x => x.Clicks),
             });
-    }
 
     private static string GetBlogPostId(UserRecord userRecord)
     {
@@ -92,11 +85,11 @@ public sealed partial class TransformBlogPostRecordsJob : IJob
 
         var mergedRecords = MergeRecords(oldBlogPostRecords, newBlogPostRecords);
 
-        await blogPostRecordRepository.DeleteBulkAsync(oldBlogPostRecords.Select(o => o.Id).ToArray());
-        await blogPostRecordRepository.StoreBulkAsync(mergedRecords.ToArray());
+        await blogPostRecordRepository.DeleteBulkAsync([.. oldBlogPostRecords.Select(o => o.Id)]);
+        await blogPostRecordRepository.StoreBulkAsync([.. mergedRecords]);
 
         LogDeletingUserRecords(userRecords.Count);
-        await userRecordRepository.DeleteBulkAsync(userRecords.Select(u => u.Id).ToArray());
+        await userRecordRepository.DeleteBulkAsync([.. userRecords.Select(u => u.Id)]);
         LogDeletedUserRecords();
     }
 

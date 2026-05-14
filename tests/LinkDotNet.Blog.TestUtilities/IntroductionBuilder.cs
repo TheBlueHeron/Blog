@@ -26,13 +26,10 @@ public class IntroductionBuilder
         return this;
     }
 
-    public Introduction Build()
+    public Introduction Build() => new()
     {
-        return new Introduction
-        {
-            BackgroundUrl = backgroundUrl,
-            ProfilePictureUrl = profilePictureUrl,
-            Description = description,
-        };
-    }
+        BackgroundUrl = backgroundUrl,
+        ProfilePictureUrl = profilePictureUrl,
+        Description = description,
+    };
 }

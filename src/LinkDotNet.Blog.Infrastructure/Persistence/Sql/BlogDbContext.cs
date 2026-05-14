@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using LinkDotNet.Blog.Domain;
 using LinkDotNet.Blog.Infrastructure.Persistence.Sql.Mapping;
 using Microsoft.EntityFrameworkCore;
@@ -7,11 +7,7 @@ namespace LinkDotNet.Blog.Infrastructure.Persistence.Sql;
 
 public sealed class BlogDbContext : DbContext
 {
-    public BlogDbContext(DbContextOptions options)
-        : base(options)
-    {
-        Database.EnsureCreated();
-    }
+    public BlogDbContext(DbContextOptions options) : base(options) => Database.EnsureCreated();
 
     public DbSet<BlogPost> BlogPosts { get; set; }
 

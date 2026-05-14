@@ -96,23 +96,20 @@ public class ApplicationConfigurationBuilder
         return this;
     }
 
-    public ApplicationConfiguration Build()
+    public ApplicationConfiguration Build() => new()
     {
-        return new ApplicationConfiguration
-        {
-            BlogName = blogName,
-            ConnectionString = connectionString,
-            DatabaseName = databaseName,
-            BlogPostsPerPage = blogPostsPerPage,
-            FirstPageCacheDurationInMinutes = firstPageCacheDurationInMinutes,
-            IsAboutMeEnabled = isAboutMeEnabled,
-            IsGiscusEnabled = isGiscusEnabled,
-            IsDisqusEnabled = isDisqusEnabled,
-            ShowReadingIndicator = showReadingIndicator,
-            ShowSimilarPosts = showSimilarPosts,
-            ShowBuildInformation = showBuildInformation,
-            BlogBrandUrl = blogBrandUrl,
-            UseMultiAuthorMode = useMultiAuthorMode,
-        };
-    }
+        BlogName = blogName,
+        ConnectionString = connectionString,
+        DatabaseName = databaseName,
+        BlogPostsPerPage = blogPostsPerPage,
+        FirstPageCacheDurationInMinutes = firstPageCacheDurationInMinutes,
+        IsAboutMeEnabled = isAboutMeEnabled,
+        IsGiscusEnabled = isGiscusEnabled,
+        IsDisqusEnabled = isDisqusEnabled,
+        ShowReadingIndicator = showReadingIndicator,
+        ShowSimilarPosts = showSimilarPosts,
+        ShowBuildInformation = showBuildInformation,
+        BlogBrandUrl = blogBrandUrl,
+        UseMultiAuthorMode = useMultiAuthorMode,
+    };
 }
