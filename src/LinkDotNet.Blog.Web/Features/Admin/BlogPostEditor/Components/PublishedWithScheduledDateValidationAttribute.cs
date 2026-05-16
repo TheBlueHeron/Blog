@@ -10,8 +10,9 @@ public sealed class PublishedWithScheduledDateValidationAttribute : ValidationAt
     {
         ArgumentNullException.ThrowIfNull(validationContext);
 
-        return validationContext.ObjectInstance is CreateNewModel { IsPublished: true, ScheduledPublishDate: not null }
-            ? new ValidationResult("Cannot publish the post right away and schedule it for later.")
-            : ValidationResult.Success;
+        return validationContext.ObjectInstance is CreateNewModel { IsPublished: true, ScheduledPublishDate: not null } model
+            && model.ScheduledPublishDate > DateTime.UtcNow
+                ? new ValidationResult("Cannot publish the post right away and schedule it for later.")
+                : ValidationResult.Success;
     }
 }

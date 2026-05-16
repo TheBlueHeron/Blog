@@ -33,7 +33,6 @@ public sealed class CreateNewModel
         set => SetProperty(out field, value);
     } = string.Empty;
 
-    [Required]
     [MaxLength(1024)]
     public string PreviewImageUrl
     {
@@ -56,7 +55,6 @@ public sealed class CreateNewModel
         set => SetProperty(out field, value);
     }
 
-    [FutureDateValidation]
     public DateTime? ScheduledPublishDate
     {
         get => scheduledPublishDate;
@@ -70,6 +68,7 @@ public sealed class CreateNewModel
     } = string.Empty;
 
     [MaxLength(256)]
+    [UrlValidation]
     [FallbackUrlValidation]
     public string PreviewImageUrlFallback
     {
@@ -112,7 +111,7 @@ public sealed class CreateNewModel
         };
     }
 
-    public BlogPost ToBlogPost()
+    public BlogPost ToBlogPost(string defaultPreviewImageUrl)
     {
         var tagList = string.IsNullOrWhiteSpace(Tags)
             ? []
@@ -121,16 +120,25 @@ public sealed class CreateNewModel
             ? null
             : originalUpdatedDate;
 
+        var isPastDate = scheduledPublishDate.HasValue && scheduledPublishDate.Value <= DateTime.UtcNow;
+        var effectiveScheduledDate = isPastDate ? null : scheduledPublishDate;
+        var effectiveIsPublished = IsPublished || isPastDate;
+        var effectiveUpdatedDate = isPastDate ? scheduledPublishDate : updatedDate;
+
+        var effectiveFallbackUrl = string.IsNullOrEmpty(PreviewImageUrl) && string.IsNullOrEmpty(PreviewImageUrlFallback)
+            ? defaultPreviewImageUrl
+            : PreviewImageUrlFallback;
+
         var blogPost = BlogPost.Create(
             Title,
             ShortDescription,
             Content,
             PreviewImageUrl,
-            IsPublished,
-            updatedDate,
-            scheduledPublishDate,
+            effectiveIsPublished,
+            effectiveUpdatedDate,
+            effectiveScheduledDate,
             tagList,
-            PreviewImageUrlFallback,
+            effectiveFallbackUrl,
             AuthorName);
         blogPost.Id = id;
         return blogPost;

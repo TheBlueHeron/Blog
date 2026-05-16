@@ -203,6 +203,12 @@
                                             <small>Will be published on <strong>@model.ScheduledPublishDate?.ToString("MMMM dd, yyyy 'at' HH:mm")</strong></small>
                                         </div>
                                     }
+                                    @if (IsPastDate)
+                                    {
+                                        <div class="alert alert-warning mt-2 mb-0">
+                                            <small>This date lies in the past — the post will be published immediately with <strong>@model.ScheduledPublishDate?.ToString("MMMM dd, yyyy 'at' HH:mm")</strong> as its publication date.</small>
+                                        </div>
+                                    }
                                     <ValidationMessage For="() => model.ScheduledPublishDate" class="text-danger small mt-1"></ValidationMessage>
                                 </div>
 
@@ -233,7 +239,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <div class="form-floating">
-                                        <InputText type="url" class="form-control" id="fallback-preview" @bind-Value="model.PreviewImageUrlFallback" />
+                                        <InputText type="text" class="form-control" id="fallback-preview" @bind-Value="model.PreviewImageUrlFallback" />
                                         <label for="fallback-preview">Fallback Image URL</label>
                                     </div>
                                     <ValidationMessage For="() => model.PreviewImageUrlFallback" class="text-danger small mt-1"></ValidationMessage>
@@ -336,7 +342,8 @@
     private IPagedList<ShortCode> shortCodes = PagedList<ShortCode>.Empty;
     private IPagedList<BlogPostTemplate> blogPostTemplates = PagedList<BlogPostTemplate>.Empty;
 
-    private bool IsScheduled => model.ScheduledPublishDate.HasValue;
+    private bool IsScheduled => model.ScheduledPublishDate.HasValue && model.ScheduledPublishDate.Value > DateTime.UtcNow;
+    private bool IsPastDate => model.ScheduledPublishDate.HasValue && model.ScheduledPublishDate.Value <= DateTime.UtcNow;
 
     private string? authorName;
 
@@ -398,7 +405,7 @@
     {
         canSubmit = false;
         model.AuthorName = authorName;
-        await OnBlogPostCreated.InvokeAsync(model.ToBlogPost());
+        await OnBlogPostCreated.InvokeAsync(model.ToBlogPost(AppConfiguration.Value.DefaultPreviewImageUrl));
         if (model.ShouldInvalidateCache)
         {
             await CacheInvalidator.ClearCacheAsync();

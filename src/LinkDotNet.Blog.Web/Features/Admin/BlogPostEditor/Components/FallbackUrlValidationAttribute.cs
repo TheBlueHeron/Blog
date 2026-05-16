@@ -12,8 +12,9 @@ public sealed class FallbackUrlValidationAttribute : ValidationAttribute
 
         var model = (CreateNewModel)validationContext.ObjectInstance;
 
-        return model.PreviewImageUrl == model.PreviewImageUrlFallback
-            ? new ValidationResult("Preview image url and the fallback preview image url should not be the same.")
-            : ValidationResult.Success;
+        return !string.IsNullOrEmpty(model.PreviewImageUrl)
+            && model.PreviewImageUrl == model.PreviewImageUrlFallback
+                ? new ValidationResult("Preview image url and the fallback preview image url should not be the same.")
+                : ValidationResult.Success;
     }
 }

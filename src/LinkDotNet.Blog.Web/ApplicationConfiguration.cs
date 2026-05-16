@@ -29,4 +29,6 @@ public sealed record ApplicationConfiguration
     public bool UseMultiAuthorMode { get; init; }
 
     public bool EnableTagDiscoveryPanel { get; set; }
+
+    public string DefaultPreviewImageUrl { get; init; } = "/assets/DefaultPreview.webp";
 }
