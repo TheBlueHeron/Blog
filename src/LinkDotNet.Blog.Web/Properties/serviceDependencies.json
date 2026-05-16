@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "storage1": {
+      "type": "storage",
+      "connectionId": "StorageConnection",
+      "dynamicId": null
+    },
+    "identityapp1": {
+      "type": "identityapp"
+    }
+  }
+}

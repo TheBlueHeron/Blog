@@ -1,0 +1,29 @@
+{
+  "dependencies": {
+    "identityapp1": {
+      "restored": true,
+      "restoreTime": "2026-05-15T09:53:30.7762033Z"
+    },
+    "storage1": {
+      "restored": true,
+      "restoreTime": "2026-05-15T09:51:33.8214984Z"
+    }
+  },
+  "parameters": {
+    "storage1.serviceConnectorResourceGroupName": {
+      "Name": "storage1.serviceConnectorResourceGroupName",
+      "Type": "resourceGroup",
+      "Value": "rgBlog"
+    },
+    "storage1.resourceGroupName": {
+      "Name": "storage1.resourceGroupName",
+      "Type": "resourceGroup",
+      "Value": "rgBlog"
+    },
+    "storage1.subscriptionId": {
+      "Name": "storage1.subscriptionId",
+      "Type": "subscription",
+      "Value": "8c584914-eae6-489e-a653-cfb4815deaeb"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "storage1": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('serviceConnectorResourceGroupName')]/providers/Microsoft.Web/sites/BlogWeb/providers/Microsoft.ServiceLinker/linkers/StorageConnection_746CB28256, /subscriptions/8c584914-eae6-489e-a653-cfb4815deaeb/resourcegroups/rgBlog/providers/Microsoft.Web/sites/BlogWeb/providers/Microsoft.ServiceLinker/linkers/StorageConnection_9F09422223",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Storage/storageAccounts/blogwebstorage",
+      "type": "storage.azure",
+      "connectionId": "StorageConnection",
+      "dynamicId": null
+    },
+    "identityapp1": {
+      "connectionInfo": "App registration: BlogWeb, Tenant: TheBlueHeron (michaelbakker1live.onmicrosoft.com - Microsoft Entra ID)",
+      "type": "identityapp.default"
+    }
+  }
+}

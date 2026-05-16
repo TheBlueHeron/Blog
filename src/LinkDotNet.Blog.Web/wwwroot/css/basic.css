@@ -603,11 +603,12 @@ code {
 	overflow-x: hidden;
 }
 
-.blogpost-content img {
+/*.blogpost-content img {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
-}
+}*/
+
 /*#endregion */
 
 /*region ShortCodeDialog.razor */
