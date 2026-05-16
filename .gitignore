@@ -37,3 +37,4 @@ backups/
 .DS_Store
 
 .fake
+/src/LinkDotNet.Blog.Web/appsettings.json
