@@ -9,6 +9,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
     <PackageReference Include="RavenDB.TestDriver" />
+    <PackageReference Include="SharpCompress" />
 	</ItemGroup>
 
 	<ItemGroup>

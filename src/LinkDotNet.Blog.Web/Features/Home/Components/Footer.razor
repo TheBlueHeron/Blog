@@ -4,15 +4,12 @@
 @inject IOptions<ProfileInformation> ProfileInformation
 @inject IOptions<SupportMeConfiguration> SupportConfiguration
 
-<footer class="position-absolute bottom-0 w-100 text-center text-body-secondary text-muted" style="height: 4.1rem;">
+<footer class="position-absolute bottom-0 w-100 text-center text-body-secondary text-muted" style="height: 3rem;">
 	<small>
 	<span>© @DateTime.Now.Year @CopyrightName</span>
 	@if (AppConfiguration.Value.ShowBuildInformation)
 	{
-		<p class="text-gray-300 mb-0">Made with ❤️, @BuildInformation.TargetFrameworkMoniker, and Blazor</p>
-		<p class="text-gray-300">
-			Built At: @(BuildInformation.BuildAt.ToString("dd-MM-yyyy HH:mm")) (UTC)
-		</p>
+		<p class="text-gray-300 mb-0">Made with ❤️, .NET 10, and Blazor</p>
 	}
 	@if (SupportConfiguration.Value.ShowInFooter)
 	{
@@ -26,5 +23,5 @@
 @code {
     private string CopyrightName => AppConfiguration.Value.IsAboutMeEnabled
         ? ProfileInformation.Value.Name
-        : string.Empty;
+        : AppConfiguration.Value.BlogName;
 }
