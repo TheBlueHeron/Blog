@@ -49,7 +49,7 @@ else if (BlogPost is not null)
 				<div class="text-body-secondary d-flex flex-wrap align-items-center gap-3 meta-info">
 					<div class="d-inline-flex align-items-center">
 						<span class="date me-1"></span>
-						<span>@BlogPost.UpdatedDate.ToShortDateString()</span>
+						<span>@BlogPost.UpdatedDate.ToString("dd MMM yyyy HH:mm")</span>
 					</div>
 					<div class="d-inline-flex align-items-center">
 						<span class="read-time me-1"></span>
