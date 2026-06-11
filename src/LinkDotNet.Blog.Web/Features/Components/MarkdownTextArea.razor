@@ -1,8 +1,8 @@
 @using System.IO
 @using System.Linq
-@using LinkDotNet.Blog.Web.Features.Services.FileUpload
 @using IToastService = Blazored.Toast.Services.IToastService
-@inject IBlobUploadService BlobUploadService
+@using LinkDotNet.Blog.Web.Features.Services.Files
+@inject IBlobService BlobUploadService
 @inject IToastService ToastService
 @inject IJSRuntime JSRuntime
 @implements IAsyncDisposable

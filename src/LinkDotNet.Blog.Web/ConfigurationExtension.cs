@@ -1,7 +1,7 @@
 using System;
 using LinkDotNet.Blog.Domain;
 using LinkDotNet.Blog.Web.Authentication.OpenIdConnect;
-using LinkDotNet.Blog.Web.Features.Services.FileUpload;
+using LinkDotNet.Blog.Web.Features.Services.Files;
 using LinkDotNet.Blog.Web.Features.ShowBlogPost.Components;
 using LinkDotNet.Blog.Web.Features.SupportMe.Components;
 using Microsoft.Extensions.Configuration;

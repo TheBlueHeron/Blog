@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LinkDotNet.Blog.Web.Features.Services.Similiarity;
+namespace LinkDotNet.Blog.Web.Features.Services.Similarity;
 
 public static class SimilarityCalculator
 {

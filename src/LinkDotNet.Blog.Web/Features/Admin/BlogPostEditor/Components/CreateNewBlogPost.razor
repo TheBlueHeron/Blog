@@ -4,481 +4,469 @@
 @using LinkDotNet.Blog.Web.Features.Admin.BlogPostEditor.Services
 @using LinkDotNet.Blog.Web.Features.Services
 @using NCronJob
-@inject IJSRuntime JSRuntime
 @inject ICacheInvalidator CacheInvalidator
 @inject IInstantJobRegistry InstantJobRegistry
 @inject IRepository<ShortCode> ShortCodeRepository
 @inject IRepository<BlogPostTemplate> TemplateRepository
-@inject IToastService ToastService
 @inject IOptions<ApplicationConfiguration> AppConfiguration
 @inject ICurrentUserService CurrentUserService
 @inject IBlogPostVersionService BlogPostVersionService
+@inject IToastService ToastService
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Creating new Blog Post</PageTitle>
-
 <div class="container-fluid px-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fw-bold text-primary mb-0">@Title</h2>
-                <div class="d-flex gap-2">
-                    <span class="badge text-body-secondary px-3 py-2 fw-medium">
-                        @GetStatusText()
-                    </span>
-                    @if (model.IsDirty)
-                    {
-                        <span class="badge bg-warning text-dark px-3 py-2 fw-medium">
-                            Unsaved Changes
-                        </span>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="row">
+		<div class="col-12">
+			<div class="d-flex justify-content-between align-items-center mb-4">
+				<h2 class="fw-bold text-primary mb-0">@Title</h2>
+				<div class="d-flex gap-2">
+					<span class="badge text-body-secondary px-3 py-2 fw-medium">
+						@GetStatusText()
+					</span>
+					@if (model.IsDirty)
+					{
+						<span class="badge bg-warning text-dark px-3 py-2 fw-medium">
+							Unsaved Changes
+						</span>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+	<EditForm Model="@model" OnValidSubmit="OnValidBlogPostCreatedAsync">
+		<DataAnnotationsValidator />
+		<div class="row g-4">
+			<div class="col-lg-8">
+				<div class="card shadow-sm border-0 hover-shadow-lg transition">
+					<div class="card-header border-bottom-0 py-3">
+						<h5 class="card-title mb-0 text-primary">Content</h5>
+					</div>
+					<div class="card-body p-0">
+						<div class="p-4 border-bottom">
+							<div class="form-floating">
+								<input type="text" class="form-control form-control-lg shadow-none fs-3 fw-semibold" id="title" @oninput="args => model.Title = args.Value!.ToString()!"
+								value="@model.Title"/>
+								<label for="title" class="fw-bold">Post Title</label>
+							</div>
+							<ValidationMessage For="() => model.Title" class="text-danger small mt-1"></ValidationMessage>
+						</div>
 
-    <EditForm Model="@model" OnValidSubmit="OnValidBlogPostCreatedAsync">
-        <DataAnnotationsValidator />
+						<div class="p-4 border-bottom">
+							<label class="form-label fw-bold mb-3">Short Description</label>
+							<MarkdownTextArea Id="short" Class="form-control border-0 shadow-none"
+							Rows="4" Placeholder="Write a compelling summary..."
+							@bind-Value="@model.ShortDescription"
+							PreviewFunction="ReplaceShortCodes"></MarkdownTextArea>
+							<ValidationMessage For="() => model.ShortDescription" class="text-danger small mt-1"></ValidationMessage>
+						</div>
 
-        <div class="row g-4">
-            <div class="col-lg-8">
-                <div class="card shadow-sm border-0 hover-shadow-lg transition">
-                    <div class="card-header border-bottom-0 py-3">
-                        <h5 class="card-title mb-0 text-primary">Content</h5>
-                    </div>
-                    <div class="card-body p-0">
-                                <div class="p-4 border-bottom">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control form-control-lg shadow-none fs-3 fw-semibold" id="title" @oninput="args => model.Title = args.Value!.ToString()!"
-                                               value="@model.Title"/>
-                                        <label for="title" class="fw-bold">Post Title</label>
-                                    </div>
-                                    <ValidationMessage For="() => model.Title" class="text-danger small mt-1"></ValidationMessage>
-                                </div>
+						<div class="p-4 position-relative">
+							<label class="form-label fw-bold mb-3">
+								Content                        <span class="badge bg-secondary ms-2 fw-medium">@ReadingTimeCalculator.GetWordCount(model.Content) words</span>
+								<span class="badge bg-info ms-1 fw-medium">~@GetEstimatedReadTime() min read</span>
+							</label>
+							<MarkdownTextArea Id="content" Class="form-control border-0 shadow-none"
+							Rows="25" Placeholder="Start writing your amazing content..."
+							PreviewFunction="ReplaceShortCodes"
+							@bind-Value="@model.Content"></MarkdownTextArea>
+							<ValidationMessage For="() => model.Content" class="text-danger small mt-1"></ValidationMessage>
 
-                                <div class="p-4 border-bottom">
-                                    <label class="form-label fw-bold mb-3">Short Description</label>
-                                    <MarkdownTextArea Id="short" Class="form-control border-0 shadow-none"
-                                                      Rows="4" Placeholder="Write a compelling summary..."
-                                                      @bind-Value="@model.ShortDescription"
-                                                      PreviewFunction="ReplaceShortCodes"></MarkdownTextArea>
-                                    <ValidationMessage For="() => model.ShortDescription" class="text-danger small mt-1"></ValidationMessage>
-                                </div>
+							<div class="position-absolute top-0 end-0 m-3">
+								<div class="btn-group me-2">
+									<button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button"
+									data-bs-toggle="dropdown" aria-expanded="false">
+										Templates
+									</button>
+									<ul class="dropdown-menu dropdown-menu-end">
+										<li>
+											<button type="button" class="dropdown-item" @onclick="OpenTemplateDialog">
+												Manage Templates
+											</button>
+										</li>
+										@if (blogPostTemplates.Any())
+										{
+											<li><hr class="dropdown-divider"></li>
+											<h6 class="dropdown-header">Load Template</h6>
+											@foreach (var template in blogPostTemplates)
+											{
+												<li>
+													<button type="button" class="dropdown-item" @onclick="() => LoadTemplate(template)">
+														@template.Name
+													</button>
+												</li>
+											}
+										}
+									</ul>
+								</div>
+								<div class="btn-group">
+									<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
+									data-bs-toggle="dropdown" aria-expanded="false">
+										Tools
+									</button>
+									<ul class="dropdown-menu dropdown-menu-end">
+										@if (shortCodes.Count > 0)
+										{
+											<li>
+												<button type="button" @onclick="OpenShortCodeDialog" class="dropdown-item">
+													Insert Shortcode
+												</button>
+											</li>
+											<li><hr class="dropdown-divider"></li>
+										}
+										<li>
+											<button type="button" class="dropdown-item" @onclick="FeatureDialog.Open">
+												Experimental Features
+											</button>
+										</li>
+										<li>
+											<button id="convert" type="button" class="dropdown-item" @onclick="ConvertContent">
+												@ConvertLabel <i class="lab"></i>
+											</button>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-4">
+				<div class="card shadow-sm border-0 mb-4 hover-shadow-lg transition">
+					<div class="card-header border-bottom-0 py-3">
+						<h6 class="card-title mb-0 text-primary">Quick Actions</h6>
+					</div>
+					<div class="card-body">
+						<div class="d-grid">
+							<button class="btn btn-primary fw-medium transition" type="submit" disabled="@(!canSubmit)">
+								@(BlogPost != null ? "Update Post" : "Create Post")
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="card shadow-sm border-0 mb-4 hover-shadow-lg transition">
+					<div class="card-header border-bottom-0 py-3">
+						<h6 class="card-title mb-0 text-primary">Tags</h6>
+					</div>
+					<div class="card-body">
+						<div class="form-floating">
+							<InputText type="text" class="form-control" id="tags" @bind-Value="model.Tags" />
+							<label for="tags">Tags (comma separated)</label>
+						</div>
+						<small class="form-text text-muted mt-2">
+							Add relevant tags to improve content discoverability and SEO. Use specific, searchable terms that describe your content.
+						</small>
+						@if (!string.IsNullOrWhiteSpace(model.Tags))
+						{
+							<div class="mt-2">
+								@foreach (var tag in model.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries))
+								{
+									<span class="badge bg-secondary me-1 mb-1">@tag.Trim()</span>
+								}
+							</div>
+						}
+					</div>
+				</div>
+				<div class="card shadow-sm border-0 mb-4 hover-shadow-lg transition">
+					<div class="card-header border-bottom-0 py-3">
+						<h6 class="card-title mb-0 text-primary">Publishing & Visibility</h6>
+					</div>
+					<div class="card-body">
+						<div class="form-check form-switch mb-4">
+							<InputCheckbox class="form-check-input" id="published" @bind-Value="model.IsPublished" />
+							<label class="form-check-label fw-bold" for="published">
+								@(model.IsPublished ? "Published" : "Draft")
+							</label>
+							<small class="form-text text-muted d-block">
+								@(model.IsPublished ? "Visible to everyone" : "Only visible to you")
+							</small>
+						</div>
+						<ValidationMessage For="() => model.IsPublished" class="text-danger small mb-3"></ValidationMessage>
 
-                                <div class="p-4 position-relative">
-                                    <label class="form-label fw-bold mb-3">
-                                        Content                        <span class="badge bg-secondary ms-2 fw-medium">@ReadingTimeCalculator.GetWordCount(model.Content) words</span>
-                        <span class="badge bg-info ms-1 fw-medium">~@GetEstimatedReadTime() min read</span>
-                                    </label>
-                                    <MarkdownTextArea Id="content" Class="form-control border-0 shadow-none"
-                                                      Rows="25" Placeholder="Start writing your amazing content..."
-                                                      PreviewFunction="ReplaceShortCodes"
-                                                      @bind-Value="@model.Content"></MarkdownTextArea>
-                                    <ValidationMessage For="() => model.Content" class="text-danger small mt-1"></ValidationMessage>
+						<div class="mb-4">
+							<label class="form-label fw-bold">Schedule Publication</label>
+							<div class="form-floating">
+								<InputDate Type="InputDateType.DateTimeLocal" class="form-control" id="scheduled"
+								placeholder="Scheduled Publish Date" @bind-Value="model.ScheduledPublishDate"
+								@bind-Value:after="@(() => model.IsPublished &= !IsScheduled)" />
+								<label for="scheduled">Select date and time</label>
+							</div>
+							@if (IsScheduled)
+							{
+								<div class="alert alert-info mt-2 mb-0">
+									<small>Will be published on <strong>@model.ScheduledPublishDate?.ToString("MMMM dd, yyyy 'at' HH:mm")</strong></small>
+								</div>
+							}
+							@if (IsPastDate)
+							{
+								<div class="alert alert-warning mt-2 mb-0">
+									<small>This date lies in the past — the post will be published immediately with <strong>@model.ScheduledPublishDate?.ToString("MMMM dd, yyyy 'at' HH:mm")</strong> as its publication date.</small>
+								</div>
+							}
+							<ValidationMessage For="() => model.ScheduledPublishDate" class="text-danger small mt-1"></ValidationMessage>
+						</div>
 
-                                    <div class="position-absolute top-0 end-0 m-3">
-                                        <div class="btn-group me-2">
-                                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button"
-                                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                                Templates
-                                            </button>
-                                            <ul class="dropdown-menu dropdown-menu-end">
-                                                <li>
-                                                    <button type="button" class="dropdown-item" @onclick="OpenTemplateDialog">
-                                                        Manage Templates
-                                                    </button>
-                                                </li>
-                                                @if (blogPostTemplates.Any())
-                                                {
-                                                    <li><hr class="dropdown-divider"></li>
-                                                    <h6 class="dropdown-header">Load Template</h6>
-                                                    @foreach (var template in blogPostTemplates)
-                                                    {
-                                                        <li>
-                                                            <button type="button" class="dropdown-item" @onclick="() => LoadTemplate(template)">
-                                                                @template.Name
-                                                            </button>
-                                                        </li>
-                                                    }
-                                                }
-                                            </ul>
-                                        </div>
-                                        <div class="btn-group">
-                                            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
-                                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                                Tools
-                                            </button>
-                                            <ul class="dropdown-menu dropdown-menu-end">
-                                                @if (shortCodes.Count > 0)
-                                                {
-                                                    <li>
-                                                        <button type="button" @onclick="OpenShortCodeDialog" class="dropdown-item">
-                                                            Insert Shortcode
-                                                        </button>
-                                                    </li>
-                                                    <li><hr class="dropdown-divider"></li>
-                                                }
-                                                <li>
-                                                    <button type="button" class="dropdown-item" @onclick="FeatureDialog.Open">
-                                                        Experimental Features
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button id="convert" type="button" class="dropdown-item" @onclick="ConvertContent">
-                                                        @ConvertLabel <i class="lab"></i>
-                                                    </button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-4">
-                        <div class="card shadow-sm border-0 mb-4 hover-shadow-lg transition">
-                            <div class="card-header border-bottom-0 py-3">
-                                <h6 class="card-title mb-0 text-primary">Quick Actions</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="d-grid">
-                                    <button class="btn btn-primary fw-medium transition" type="submit" disabled="@(!canSubmit)">
-                                        @(BlogPost != null ? "Update Post" : "Create Post")
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card shadow-sm border-0 mb-4 hover-shadow-lg transition">
-                            <div class="card-header border-bottom-0 py-3">
-                                <h6 class="card-title mb-0 text-primary">Tags</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-floating">
-                                    <InputText type="text" class="form-control" id="tags" @bind-Value="model.Tags" />
-                                    <label for="tags">Tags (comma separated)</label>
-                                </div>
-                                <small class="form-text text-muted mt-2">
-                                    Add relevant tags to improve content discoverability and SEO. Use specific, searchable terms that describe your content.
-                                </small>
-                                @if (!string.IsNullOrWhiteSpace(model.Tags))
-                                {
-                                    <div class="mt-2">
-                                        @foreach (var tag in model.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries))
-                                        {
-                                            <span class="badge bg-secondary me-1 mb-1">@tag.Trim()</span>
-                                        }
-                                    </div>
-                                }
-                            </div>
-                        </div>
-
-                        <div class="card shadow-sm border-0 mb-4 hover-shadow-lg transition">
-                            <div class="card-header border-bottom-0 py-3">
-                                <h6 class="card-title mb-0 text-primary">Publishing & Visibility</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-check form-switch mb-4">
-                                    <InputCheckbox class="form-check-input" id="published" @bind-Value="model.IsPublished" />
-                                    <label class="form-check-label fw-bold" for="published">
-                                        @(model.IsPublished ? "Published" : "Draft")
-                                    </label>
-                                    <small class="form-text text-muted d-block">
-                                        @(model.IsPublished ? "Visible to everyone" : "Only visible to you")
-                                    </small>
-                                </div>
-                                <ValidationMessage For="() => model.IsPublished" class="text-danger small mb-3"></ValidationMessage>
-
-                                <div class="mb-4">
-                                    <label class="form-label fw-bold">Schedule Publication</label>
-                                    <div class="form-floating">
-                                        <InputDate Type="InputDateType.DateTimeLocal" class="form-control" id="scheduled"
-                                                   placeholder="Scheduled Publish Date" @bind-Value="model.ScheduledPublishDate"
-                                                   @bind-Value:after="@(() => model.IsPublished &= !IsScheduled)" />
-                                        <label for="scheduled">Select date and time</label>
-                                    </div>
-                                    @if (IsScheduled)
-                                    {
-                                        <div class="alert alert-info mt-2 mb-0">
-                                            <small>Will be published on <strong>@model.ScheduledPublishDate?.ToString("MMMM dd, yyyy 'at' HH:mm")</strong></small>
-                                        </div>
-                                    }
-                                    @if (IsPastDate)
-                                    {
-                                        <div class="alert alert-warning mt-2 mb-0">
-                                            <small>This date lies in the past — the post will be published immediately with <strong>@model.ScheduledPublishDate?.ToString("MMMM dd, yyyy 'at' HH:mm")</strong> as its publication date.</small>
-                                        </div>
-                                    }
-                                    <ValidationMessage For="() => model.ScheduledPublishDate" class="text-danger small mt-1"></ValidationMessage>
-                                </div>
-
-                                @if (BlogPost is not null && !IsScheduled)
-                                {
-                                    <div class="form-check form-switch">
-                                        <InputCheckbox class="form-check-input" id="updatedate" @bind-Value="model.ShouldUpdateDate" />
-                                        <label class="form-check-label fw-bold" for="updatedate">Update Publication Date</label>
-                                        <small class="form-text text-muted d-block">
-                                            Update the post's publication date to now
-                                        </small>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-
-                        <div class="card shadow-sm border-0 mb-4 hover-shadow-lg transition">
-                            <div class="card-header border-bottom-0 py-3">
-                                <h6 class="card-title mb-0 text-primary">Featured Image</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="mb-3">
-                                    <div class="form-floating">
-                                        <InputText type="url" class="form-control" id="preview" @bind-Value="model.PreviewImageUrl" />
-                                        <label for="preview">Primary Image URL</label>
-                                    </div>
-                                    <ValidationMessage For="() => model.PreviewImageUrl" class="text-danger small mt-1"></ValidationMessage>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="form-floating">
-                                        <InputText type="text" class="form-control" id="fallback-preview" @bind-Value="model.PreviewImageUrlFallback" />
-                                        <label for="fallback-preview">Fallback Image URL</label>
-                                    </div>
-                                    <ValidationMessage For="() => model.PreviewImageUrlFallback" class="text-danger small mt-1"></ValidationMessage>
-                                </div>
-                                <small class="form-text text-muted">
-                                    The fallback image ensures compatibility across all platforms. Use JPG or PNG format for maximum support when your primary image is WebP or AVIF.
-                                </small>
-                            </div>
-                        </div>
-
-                        <div class="card shadow-sm border-0 hover-shadow-lg transition">
-                            <div class="card-header border-bottom-0 py-3">
-                                <h6 class="card-title mb-0 text-primary">Cache Management</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-check form-switch mb-3">
-                                    <InputCheckbox class="form-check-input" id="invalidate-cache" @bind-Value="model.ShouldInvalidateCache" />
-                                    <label class="form-check-label fw-bold" for="invalidate-cache">Clear Cache</label>
-                                    <small class="form-text text-muted d-block">
-                                        Make this post visible immediately on the homepage
-                                    </small>
-                                </div>
-                                <div class="alert alert-info mb-0">
-                                    <small>Enable this to make your post immediately visible on the homepage after publishing.</small>
-                                </div>
-                            </div>
-                        </div>
-                        @if (!string.IsNullOrEmpty(BlogPostId) && versionHistory.Count > 0)
-                        {
-                            <div class="card shadow-sm border-0 hover-shadow-lg transition mt-4">
-                                <div class="card-header border-bottom-0 py-3 d-flex justify-content-between align-items-center">
-                                    <h6 class="card-title mb-0 text-primary">Version History</h6>
-                                    <span class="badge bg-secondary">@versionHistory.Count</span>
-                                </div>
-                                <div class="card-body p-0">
-                                    <div class="list-group list-group-flush" style="max-height: 320px; overflow-y: auto;">
-                                        @foreach (var v in versionHistory)
-                                        {
-                                            <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3">
-                                                <div class="me-2" style="min-width: 0;">
-                                                    <div class="fw-semibold small">v@(v.VersionNumber)</div>
-                                                    <div class="text-muted" style="font-size: 0.72rem;">@v.CreatedAt.ToString("MMM dd, yyyy HH:mm")</div>
-                                                    <div class="text-truncate text-muted" style="max-width: 130px; font-size: 0.72rem;" title="@v.Title">@v.Title</div>
-                                                </div>
-                                                <div class="d-flex flex-column gap-1 flex-shrink-0">
-                                                    <button type="button" class="btn btn-outline-secondary btn-sm" @onclick="() => OpenDiff(v)">Diff</button>
-                                                    <button type="button" class="btn btn-outline-warning btn-sm" @onclick="() => RestoreVersionAsync(v)">Restore</button>
-                                                </div>
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-    </EditForm>
+						@if (BlogPost is not null && !IsScheduled)
+						{
+							<div class="form-check form-switch">
+								<InputCheckbox class="form-check-input" id="updatedate" @bind-Value="model.ShouldUpdateDate" />
+								<label class="form-check-label fw-bold" for="updatedate">Update Publication Date</label>
+								<small class="form-text text-muted d-block">
+									Update the post's publication date to now
+								</small>
+							</div>
+						}
+					</div>
+				</div>
+				<div class="card shadow-sm border-0 mb-4 hover-shadow-lg transition">
+					<div class="card-header border-bottom-0 py-3">
+						<h6 class="card-title mb-0 text-primary">Featured Image</h6>
+					</div>
+					<div class="card-body">
+						<div class="mb-3">
+							<div class="form-floating">
+								<ImagePicker @bind-Value="model.PreviewImageUrl" />
+							</div>
+							<ValidationMessage For="() => model.PreviewImageUrl" class="text-danger small mt-1"></ValidationMessage>
+						</div>
+						<div class="mb-3">
+							<div class="form-floating">
+								<InputText type="text" class="form-control" id="fallback-preview" @bind-Value="model.PreviewImageUrlFallback" />
+								<label for="fallback-preview">Fallback Image URL</label>
+							</div>
+							<ValidationMessage For="() => model.PreviewImageUrlFallback" class="text-danger small mt-1"></ValidationMessage>
+						</div>
+						<small class="form-text text-muted">
+							The fallback image ensures compatibility across all platforms. Use JPG or PNG format for maximum support when your primary image is WebP or AVIF.
+						</small>
+					</div>
+				</div>
+				<div class="card shadow-sm border-0 hover-shadow-lg transition">
+					<div class="card-header border-bottom-0 py-3">
+						<h6 class="card-title mb-0 text-primary">Cache Management</h6>
+					</div>
+					<div class="card-body">
+						<div class="form-check form-switch mb-3">
+							<InputCheckbox class="form-check-input" id="invalidate-cache" @bind-Value="model.ShouldInvalidateCache" />
+							<label class="form-check-label fw-bold" for="invalidate-cache">Clear Cache</label>
+							<small class="form-text text-muted d-block">
+								Make this post visible immediately on the homepage
+							</small>
+						</div>
+						<div class="alert alert-info mb-0">
+							<small>Enable this to make your post immediately visible on the homepage after publishing.</small>
+						</div>
+					</div>
+				</div>
+				@if (!string.IsNullOrEmpty(BlogPostId) && versionHistory.Count > 0)
+				{
+					<div class="card shadow-sm border-0 hover-shadow-lg transition mt-4">
+						<div class="card-header border-bottom-0 py-3 d-flex justify-content-between align-items-center">
+							<h6 class="card-title mb-0 text-primary">Version History</h6>
+							<span class="badge bg-secondary">@versionHistory.Count</span>
+						</div>
+						<div class="card-body p-0">
+							<div class="list-group list-group-flush" style="max-height: 320px; overflow-y: auto;">
+								@foreach (var v in versionHistory)
+								{
+									<div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3">
+										<div class="me-2" style="min-width: 0;">
+											<div class="fw-semibold small">v@(v.VersionNumber)</div>
+											<div class="text-muted" style="font-size: 0.72rem;">@v.CreatedAt.ToString("MMM dd, yyyy HH:mm")</div>
+											<div class="text-truncate text-muted" style="max-width: 130px; font-size: 0.72rem;" title="@v.Title">@v.Title</div>
+										</div>
+										<div class="d-flex flex-column gap-1 flex-shrink-0">
+											<button type="button" class="btn btn-outline-secondary btn-sm" @onclick="() => OpenDiff(v)">Diff</button>
+											<button type="button" class="btn btn-outline-warning btn-sm" @onclick="() => RestoreVersionAsync(v)">Restore</button>
+										</div>
+									</div>
+								}
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	</EditForm>
 </div>
-
 <FeatureInfoDialog @ref="FeatureDialog"></FeatureInfoDialog>
 <ShortCodeDialog @ref="ShortCodeDialog" ShortCodes="shortCodes"></ShortCodeDialog>
 <AddTemplateDialog @ref="AddTemplateDialog" OnSave="SaveTemplate"></AddTemplateDialog>
 <VersionDiffDialog @ref="DiffDialog"></VersionDiffDialog>
-
 <NavigationLock ConfirmExternalNavigation="@model.IsDirty" OnBeforeInternalNavigation="PreventNavigationWhenDirty"></NavigationLock>
 
 @code {
-    [Parameter]
-    public BlogPost? BlogPost { get; set; }
+	[Parameter]
+	public BlogPost? BlogPost { get; set; }
 
-    [Parameter, EditorRequired]
-    public required string Title { get; set; }
+	[Parameter, EditorRequired]
+	public required string Title { get; set; }
 
-    [Parameter]
-    public EventCallback<BlogPost> OnBlogPostCreated { get; set; }
+	[Parameter]
+	public EventCallback<BlogPost> OnBlogPostCreated { get; set; }
 
-    [Parameter]
-    public bool ClearAfterCreated { get; set; } = true;
+	[Parameter]
+	public bool ClearAfterCreated { get; set; } = true;
 
-    [Parameter]
-    public string? BlogPostId { get; set; }
+	[Parameter]
+	public string? BlogPostId { get; set; }
 
-    [Parameter]
-    public EventCallback<BlogPostVersion> OnVersionRestored { get; set; }
+	[Parameter]
+	public EventCallback<BlogPostVersion> OnVersionRestored { get; set; }
 
-    private FeatureInfoDialog FeatureDialog { get; set; } = default!;
-    private ShortCodeDialog ShortCodeDialog { get; set; } = default!;
-    private AddTemplateDialog AddTemplateDialog { get; set; } = default!;
-    private VersionDiffDialog DiffDialog { get; set; } = default!;
+	private FeatureInfoDialog FeatureDialog { get; set; } = default!;
+	private ShortCodeDialog ShortCodeDialog { get; set; } = default!;
+	private AddTemplateDialog AddTemplateDialog { get; set; } = default!;
+	private VersionDiffDialog DiffDialog { get; set; } = default!;
+	private IReadOnlyList<BlogPostVersion> versionHistory = [];
 
-    private IReadOnlyList<BlogPostVersion> versionHistory = [];
+	private CreateNewModel model = new();
 
-    private CreateNewModel model = new();
+	private string? originalContent = null;
+	private bool IsContentConverted => !string.IsNullOrWhiteSpace(originalContent);
+	private string ConvertLabel => !IsContentConverted ? "Convert to markdown" : "Restore";
 
-    private string? originalContent = null;
-    private bool IsContentConverted => !string.IsNullOrWhiteSpace(originalContent);
-    private string ConvertLabel => !IsContentConverted ? "Convert to markdown" : "Restore";
+	private bool canSubmit = true;
+	private IPagedList<ShortCode> shortCodes = PagedList<ShortCode>.Empty;
+	private IPagedList<BlogPostTemplate> blogPostTemplates = PagedList<BlogPostTemplate>.Empty;
 
-    private bool canSubmit = true;
-    private IPagedList<ShortCode> shortCodes = PagedList<ShortCode>.Empty;
-    private IPagedList<BlogPostTemplate> blogPostTemplates = PagedList<BlogPostTemplate>.Empty;
+	private bool IsScheduled => model.ScheduledPublishDate.HasValue && model.ScheduledPublishDate.Value > DateTime.UtcNow;
+	private bool IsPastDate => model.ScheduledPublishDate.HasValue && model.ScheduledPublishDate.Value <= DateTime.UtcNow;
 
-    private bool IsScheduled => model.ScheduledPublishDate.HasValue && model.ScheduledPublishDate.Value > DateTime.UtcNow;
-    private bool IsPastDate => model.ScheduledPublishDate.HasValue && model.ScheduledPublishDate.Value <= DateTime.UtcNow;
+	private string? authorName;
 
-    private string? authorName;
+	protected override async Task OnInitializedAsync()
+	{
+		shortCodes = await ShortCodeRepository.GetAllAsync();
+		blogPostTemplates = await TemplateRepository.GetAllAsync();
 
-    protected override async Task OnInitializedAsync()
-    {
-        shortCodes = await ShortCodeRepository.GetAllAsync();
-        blogPostTemplates = await TemplateRepository.GetAllAsync();
+		if (AppConfiguration.Value.UseMultiAuthorMode)
+		{
+			authorName = await CurrentUserService.GetDisplayNameAsync();
+		}
+	}
 
-        if (AppConfiguration.Value.UseMultiAuthorMode)
-        {
-            authorName = await CurrentUserService.GetDisplayNameAsync();
-        }
-    }
+	protected override async Task OnParametersSetAsync()
+	{
+		if (BlogPost is null)
+		{
+			return;
+		}
 
-    protected override async Task OnParametersSetAsync()
-    {
-        if (BlogPost is null)
-        {
-            return;
-        }
+		model = CreateNewModel.FromBlogPost(BlogPost);
 
-        model = CreateNewModel.FromBlogPost(BlogPost);
+		if (!string.IsNullOrEmpty(BlogPostId))
+		{
+			versionHistory = await BlogPostVersionService.GetVersionHistoryAsync(BlogPostId);
+		}
+	}
 
-        if (!string.IsNullOrEmpty(BlogPostId))
-        {
-            versionHistory = await BlogPostVersionService.GetVersionHistoryAsync(BlogPostId);
-        }
-    }
+	private string GetStatusText()
+	{
+		if (BlogPost != null)
+		{
+			return "Editing";
+		}
 
-    private string GetStatusText()
-    {
-        if (BlogPost != null)
-        {
-            return "Editing";
-        }
+		if (model.IsPublished)
+		{
+			return "Ready to Publish";
+		}
 
-        if (model.IsPublished)
-        {
-            return "Ready to Publish";
-        }
+		if (IsScheduled)
+		{
+			return "Scheduled";
+		}
 
-        if (IsScheduled)
-        {
-            return "Scheduled";
-        }
+		return "Draft";
+	}
 
-        return "Draft";
-    }
+	private int GetEstimatedReadTime()
+	{
+		if (string.IsNullOrWhiteSpace(model.Content))
+			return 1;
 
-    private int GetEstimatedReadTime()
-    {
-        if (string.IsNullOrWhiteSpace(model.Content))
-            return 1;
+		return ReadingTimeCalculator.CalculateReadingTime(model.Content);
+	}
 
-        return ReadingTimeCalculator.CalculateReadingTime(model.Content);
-    }
+	private async Task OnValidBlogPostCreatedAsync()
+	{
+		canSubmit = false;
+		model.AuthorName = authorName;
+		await OnBlogPostCreated.InvokeAsync(model.ToBlogPost(AppConfiguration.Value.DefaultPreviewImageUrl));
+		if (model.ShouldInvalidateCache)
+		{
+			await CacheInvalidator.ClearCacheAsync();
+		}
 
-    private async Task OnValidBlogPostCreatedAsync()
-    {
-        canSubmit = false;
-        model.AuthorName = authorName;
-        await OnBlogPostCreated.InvokeAsync(model.ToBlogPost(AppConfiguration.Value.DefaultPreviewImageUrl));
-        if (model.ShouldInvalidateCache)
-        {
-            await CacheInvalidator.ClearCacheAsync();
-        }
+		_ = InstantJobRegistry.RunInstantJob<SimilarBlogPostJob>(parameter: true);
+		ClearModel();
+		canSubmit = true;
+	}
 
-        _ = InstantJobRegistry.RunInstantJob<SimilarBlogPostJob>(parameter: true);
-        ClearModel();
-        canSubmit = true;
-    }
+	private void ClearModel()
+	{
+		if (ClearAfterCreated)
+		{
+			model = new CreateNewModel();
+		}
+	}
 
-    private void ClearModel()
-    {
-        if (ClearAfterCreated)
-        {
-            model = new CreateNewModel();
-        }
-    }
+	private void OpenDiff(BlogPostVersion version)
+	{
+		DiffDialog.Open(version, BlogPost!);
+		StateHasChanged();
+	}
 
-    private void OpenDiff(BlogPostVersion version)
-    {
-        DiffDialog.Open(version, BlogPost!);
-        StateHasChanged();
-    }
+	private async Task RestoreVersionAsync(BlogPostVersion version)
+	{
+		var confirmed = await JSRuntime.InvokeAsync<bool>(
+			"confirm",
+			$"Restore version {version.VersionNumber} (\"{version.Title}\")? The current state will be saved as a new version first.");
 
-    private async Task RestoreVersionAsync(BlogPostVersion version)
-    {
-        var confirmed = await JSRuntime.InvokeAsync<bool>(
-            "confirm",
-            $"Restore version {version.VersionNumber} (\"{version.Title}\")? The current state will be saved as a new version first.");
+		if (!confirmed)
+		{
+			return;
+		}
 
-        if (!confirmed)
-        {
-            return;
-        }
+		await OnVersionRestored.InvokeAsync(version);
+		versionHistory = await BlogPostVersionService.GetVersionHistoryAsync(BlogPostId!);
+		StateHasChanged();
+	}
 
-        await OnVersionRestored.InvokeAsync(version);
-        versionHistory = await BlogPostVersionService.GetVersionHistoryAsync(BlogPostId!);
-        StateHasChanged();
-    }
+	private async Task PreventNavigationWhenDirty(LocationChangingContext context)
+	{
+		if (!model.IsDirty)
+			return;
 
-    private async Task PreventNavigationWhenDirty(LocationChangingContext context)
-    {
-        if (!model.IsDirty)
-            return;
+		var isConfirmed = await JSRuntime.InvokeAsync<bool>("confirm", "You have unsaved changes. Are you sure you want to continue?");
 
-        var isConfirmed = await JSRuntime.InvokeAsync<bool>("confirm", "You have unsaved changes. Are you sure you want to continue?");
+		if (!isConfirmed)
+		{
+			context.PreventNavigation();
+		}
+	}
 
-        if (!isConfirmed)
-        {
-            context.PreventNavigation();
-        }
-    }
+	private Task<string> ReplaceShortCodes(string markdown)
+	{
+		foreach (var code in shortCodes)
+		{
+			markdown = markdown.Replace($"[[{code.Name}]]", code.MarkdownContent);
+		}
 
-    private Task<string> ReplaceShortCodes(string markdown)
-    {
-        foreach (var code in shortCodes)
-        {
-            markdown = markdown.Replace($"[[{code.Name}]]", code.MarkdownContent);
-        }
+		return Task.FromResult(MarkdownConverter.ToMarkupString(markdown).Value);
+	}
 
-        return Task.FromResult(MarkdownConverter.ToMarkupString(markdown).Value);
-    }
+	private void OpenShortCodeDialog()
+	{
+		ShortCodeDialog.Open();
+		StateHasChanged();
+	}
 
-    private void OpenShortCodeDialog()
-    {
-        ShortCodeDialog.Open();
-        StateHasChanged();
-    }
-
-    private async Task OpenTemplateDialog()
-    {
-        await AddTemplateDialog.Open();
-    }
+	private async Task OpenTemplateDialog()
+	{
+		await AddTemplateDialog.Open();
+	}
 
     private async Task SaveTemplate(string name)
     {

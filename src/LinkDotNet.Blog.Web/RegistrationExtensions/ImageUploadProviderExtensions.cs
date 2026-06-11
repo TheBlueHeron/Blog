@@ -1,5 +1,5 @@
 using System;
-using LinkDotNet.Blog.Web.Features.Services.FileUpload;
+using LinkDotNet.Blog.Web.Features.Services.Files;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,11 +14,11 @@ public static class ImageUploadProviderExtensions
         var imageProvider = configuration["ImageStorageProvider"];
         if (imageProvider == "Azure")
         {
-            services.AddScoped<IBlobUploadService, AzureBlobStorageService>();
+            services.AddScoped<IBlobService, AzureBlobStorageService>();
         }
         else
         {
-            services.AddScoped<IBlobUploadService, NoopStorageService>();
+            services.AddScoped<IBlobService, NoopStorageService>();
         }
 
         return services;

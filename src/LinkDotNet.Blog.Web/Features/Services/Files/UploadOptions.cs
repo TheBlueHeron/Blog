@@ -1,4 +1,4 @@
-namespace LinkDotNet.Blog.Web.Features.Services.FileUpload;
+namespace LinkDotNet.Blog.Web.Features.Services.Files;
 
 public class UploadOptions
 {

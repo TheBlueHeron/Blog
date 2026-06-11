@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Blazored.Toast.Services;
 using Bunit.TestDoubles;
 using LinkDotNet.Blog.Web.Features.Components;
-using LinkDotNet.Blog.Web.Features.Services.FileUpload;
+using LinkDotNet.Blog.Web.Features.Services.Files;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
@@ -14,7 +14,7 @@ public class MarkdownTextAreaTests : BunitContext
 {
     private void SetupServices()
     {
-        Services.AddScoped(_ => Substitute.For<IBlobUploadService>());
+        Services.AddScoped(_ => Substitute.For<IBlobService>());
         Services.AddScoped(_ => Substitute.For<IToastService>());
         JSInterop.Setup<bool>("markdownEditor.isMac", _ => true).SetResult(false);
         JSInterop.SetupVoid("markdownEditor.setupKeyboardShortcuts", _ => true).SetVoidResult();
@@ -491,7 +491,7 @@ public class MarkdownTextAreaTests : BunitContext
     public async Task ShouldShowErrorWhenFileExceedsMaxSize()
     {
         var toastService = Substitute.For<IToastService>();
-        Services.AddScoped(_ => Substitute.For<IBlobUploadService>());
+        Services.AddScoped(_ => Substitute.For<IBlobService>());
         Services.AddScoped(_ => toastService);
         JSInterop.Setup<bool>("markdownEditor.isMac", _ => true).SetResult(false);
         JSInterop.SetupVoid("markdownEditor.setupKeyboardShortcuts", _ => true).SetVoidResult();

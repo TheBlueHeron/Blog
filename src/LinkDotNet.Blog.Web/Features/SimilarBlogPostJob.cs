@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using NCronJob;
 using LinkDotNet.Blog.Domain;
 using LinkDotNet.Blog.Infrastructure.Persistence;
-using LinkDotNet.Blog.Web.Features.Services.Similiarity;
+using LinkDotNet.Blog.Web.Features.Services.Similarity;
 
 namespace LinkDotNet.Blog.Web.Features;
 
